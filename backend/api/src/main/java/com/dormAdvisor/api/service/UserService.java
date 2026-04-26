@@ -1,7 +1,10 @@
 package com.dormAdvisor.api.service;
 
+import com.dormAdvisor.api.domain.dto.UserCreateDto;
 import com.dormAdvisor.api.domain.dto.UserProfileDto;
+import com.dormAdvisor.api.domain.dto.UserUpdateDto;
 import com.dormAdvisor.api.domain.entity.User;
+import com.dormAdvisor.api.repository.SchoolRepository;
 import com.dormAdvisor.api.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -11,14 +14,25 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final SchoolRepository schoolRepository;
+
+    @Transactional
+    public UserProfileDto createUser(final UserCreateDto dto) {
+        log.info("Creating user with email: {}", dto.email());
+        final var normalized = dto.email().toLowerCase().trim();
+        final var user = User.builder()
+            .email(dto.email())
+            .emailNormalized(normalized)
+            .isVerifiedStudent(false)
+            .build();
+        return UserProfileDto.fromEntity(userRepository.save(user));
+    }
 
     @Cacheable(value = "users")
     public UserProfileDto getUserProfile(final String email) {
@@ -28,7 +42,25 @@ public class UserService {
     }
 
     @Transactional
-    @CacheEvict(value = "users", key = "#userId", beforeInvocation = true)
+    @CacheEvict(value = "users", key = "#email", beforeInvocation = true)
+    public UserProfileDto updateUser(final String email, final UserUpdateDto dto) {
+        log.info("Updating user profile for email: {}", email);
+        final var user = getUserByEmail(email);
+        if (dto.email() != null) {
+            user.setEmail(dto.email());
+            user.setEmailNormalized(dto.email().toLowerCase().trim());
+        }
+        if (dto.verifiedSchoolId() != null) {
+            final var school = schoolRepository.findById(dto.verifiedSchoolId())
+                .orElseThrow(() -> new EntityNotFoundException("School not found: " + dto.verifiedSchoolId()));
+            user.setVerifiedSchool(school);
+            user.setVerifiedStudent(true);
+        }
+        return UserProfileDto.fromEntity(userRepository.save(user));
+    }
+
+    @Transactional
+    @CacheEvict(value = "users", key = "#email", beforeInvocation = true)
     public void deleteUserProfile(final String email) {
         log.info("Request to delete user profile with email: {}", email);
         final var user = getUserByEmail(email);
