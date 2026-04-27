@@ -29,6 +29,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST, "/api/auth/magic-link").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/auth/verify").permitAll()
+                // Guest submissions — no JWT required
+                .requestMatchers(HttpMethod.POST, "/api/dorms/*/reviews").permitAll()
                 // /api/auth/google and /api/auth/google/callback are handled by the OAuth2 DSL
                 .anyRequest().authenticated()
             )
