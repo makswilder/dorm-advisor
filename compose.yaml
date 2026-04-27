@@ -7,3 +7,9 @@ services:
       - 'POSTGRES_USER=myuser'
     ports:
       - '5432'
+
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - '1025:1025'   # SMTP
+      - '8025:8025'   # Web UI — http://localhost:8025
