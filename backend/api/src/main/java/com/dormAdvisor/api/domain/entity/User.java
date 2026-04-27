@@ -43,6 +43,7 @@ public class User {
     @Column(name = "email_normalized", nullable = false, unique = true)
     private String emailNormalized;
 
+    @Builder.Default
     @Column(name = "is_verified_student", nullable = false)
     private boolean isVerifiedStudent = false;
 
