@@ -2,14 +2,20 @@ package com.dormAdvisor.api.service;
 
 import com.dormAdvisor.api.domain.dto.DormCreateDto;
 import com.dormAdvisor.api.domain.dto.DormDto;
+import com.dormAdvisor.api.domain.dto.DormRankingDto;
 import com.dormAdvisor.api.domain.dto.DormUpdateDto;
 import com.dormAdvisor.api.domain.entity.Dorm;
+import com.dormAdvisor.api.domain.entity.enums.ContentStatus;
+import com.dormAdvisor.api.domain.entity.enums.EntityStatus;
+import com.dormAdvisor.api.repository.DormAggregateRepository;
 import com.dormAdvisor.api.repository.DormRepository;
+import com.dormAdvisor.api.repository.ReviewRepository;
 import com.dormAdvisor.api.repository.SchoolRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -23,6 +29,8 @@ public class DormService {
 
     private final DormRepository dormRepository;
     private final SchoolRepository schoolRepository;
+    private final DormAggregateRepository dormAggregateRepository;
+    private final ReviewRepository reviewRepository;
 
     @Transactional
     public DormDto create(UUID schoolId, DormCreateDto dto) {
@@ -64,6 +72,27 @@ public class DormService {
     public void delete(UUID id) {
         log.info("Deleting dorm: {}", id);
         dormRepository.delete(findByIdOrThrow(id));
+    }
+
+    @Cacheable(value = "schoolRankings", key = "#schoolId + '-' + #minReviews")
+    public List<DormRankingDto> getRankings(UUID schoolId, int minReviews) {
+        log.info("Fetching rankings for school: {} minReviews: {}", schoolId, minReviews);
+        return dormAggregateRepository.findRankedBySchool(schoolId, minReviews).stream()
+            .map(da -> {
+                final var dorm = dormRepository.findById(da.getDormId()).orElseThrow();
+                final String raw = reviewRepository.findLatestVisibleReviewText(da.getDormId(), ContentStatus.VISIBLE).orElse(null);
+                final String snippet = raw != null && raw.length() > 140 ? raw.substring(0, 140) : raw;
+                return DormRankingDto.fromAggregate(da, dorm, snippet);
+            })
+            .toList();
+    }
+
+    @Cacheable(value = "dormSearch", key = "#schoolId + ':' + #q.toLowerCase()")
+    public List<DormDto> search(UUID schoolId, String q) {
+        log.info("Searching dorms for school: {} q: {}", schoolId, q);
+        return dormRepository.findBySchoolIdAndNameContainingIgnoreCaseAndStatus(schoolId, q, EntityStatus.ACTIVE).stream()
+            .map(DormDto::fromEntity)
+            .toList();
     }
 
     private Dorm findByIdOrThrow(UUID id) {

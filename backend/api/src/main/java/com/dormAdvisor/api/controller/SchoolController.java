@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
@@ -38,6 +39,11 @@ public class SchoolController {
     @GetMapping
     public ResponseEntity<List<SchoolDto>> getAll() {
         return ResponseEntity.ok(schoolService.getAll());
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<SchoolDto>> search(@RequestParam String q) {
+        return ResponseEntity.ok(schoolService.search(q));
     }
 
     @GetMapping("/{id}")

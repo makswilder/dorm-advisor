@@ -2,6 +2,7 @@ package com.dormAdvisor.api.controller;
 
 import com.dormAdvisor.api.domain.dto.DormCreateDto;
 import com.dormAdvisor.api.domain.dto.DormDto;
+import com.dormAdvisor.api.domain.dto.DormRankingDto;
 import com.dormAdvisor.api.domain.dto.DormUpdateDto;
 import com.dormAdvisor.api.service.DormService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
@@ -38,6 +40,19 @@ public class DormController {
     @GetMapping("/schools/{schoolId}/dorms")
     public ResponseEntity<List<DormDto>> getBySchool(@PathVariable UUID schoolId) {
         return ResponseEntity.ok(dormService.getBySchool(schoolId));
+    }
+
+    @GetMapping("/schools/{schoolId}/dorms/rankings")
+    public ResponseEntity<List<DormRankingDto>> getRankings(
+        @PathVariable UUID schoolId,
+        @RequestParam(defaultValue = "3") int minReviews
+    ) {
+        return ResponseEntity.ok(dormService.getRankings(schoolId, minReviews));
+    }
+
+    @GetMapping("/schools/{schoolId}/dorms/search")
+    public ResponseEntity<List<DormDto>> search(@PathVariable UUID schoolId, @RequestParam String q) {
+        return ResponseEntity.ok(dormService.search(schoolId, q));
     }
 
     @GetMapping("/dorms/{id}")
