@@ -31,6 +31,10 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/auth/verify").permitAll()
                 // Guest submissions — no JWT required
                 .requestMatchers(HttpMethod.POST, "/api/dorms/*/reviews").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/dorms/*/photos").permitAll()
+                // Public read — gallery and image serving
+                .requestMatchers(HttpMethod.GET, "/api/dorms/*/photos").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/photos/**").permitAll()
                 // /api/auth/google and /api/auth/google/callback are handled by the OAuth2 DSL
                 .anyRequest().authenticated()
             )
