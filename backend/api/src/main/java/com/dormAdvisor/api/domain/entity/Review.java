@@ -52,7 +52,7 @@ public class Review {
     @Builder.Default
     private AuthorType authorType = AuthorType.GUEST;
 
-    @Column(nullable = false)
+    @Column(name = "overall_rating", nullable = false)
     private int overall;
 
     @Column(nullable = false)

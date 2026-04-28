@@ -9,8 +9,8 @@ import com.dormAdvisor.api.repository.DormRepository;
 import com.dormAdvisor.api.repository.ReviewRepository;
 import com.dormAdvisor.api.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -57,11 +57,13 @@ public class ReviewService {
         return ReviewDto.fromEntity(reviewRepository.save(builder.build()));
     }
 
+    @Transactional(readOnly = true)
     public ReviewDto getById(UUID id) {
         log.info("Fetching review: {}", id);
         return ReviewDto.fromEntity(findByIdOrThrow(id));
     }
 
+    @Transactional(readOnly = true)
     public List<ReviewDto> getByDorm(UUID dormId) {
         log.info("Fetching reviews for dorm: {}", dormId);
         return reviewRepository.findByDormId(dormId).stream()

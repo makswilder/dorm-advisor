@@ -6,7 +6,7 @@ import java.util.UUID;
 public record UserDto(
     UUID id,
     String email,
-    boolean isVerifiedEmail,
+    boolean isVerifiedStudent,
     UUID verifiedSchoolId,
     LocalDateTime lastLoginAt,
     LocalDateTime createdAt

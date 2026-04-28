@@ -12,11 +12,11 @@ import com.dormAdvisor.api.repository.DormRepository;
 import com.dormAdvisor.api.repository.ReviewRepository;
 import com.dormAdvisor.api.repository.SchoolRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -46,11 +46,13 @@ public class DormService {
         return DormDto.fromEntity(dormRepository.save(dorm));
     }
 
+    @Transactional(readOnly = true)
     public DormDto getById(UUID id) {
         log.info("Fetching dorm: {}", id);
         return DormDto.fromEntity(findByIdOrThrow(id));
     }
 
+    @Transactional(readOnly = true)
     public List<DormDto> getBySchool(UUID schoolId) {
         log.info("Fetching dorms for school: {}", schoolId);
         return dormRepository.findBySchoolId(schoolId).stream()
@@ -74,12 +76,14 @@ public class DormService {
         dormRepository.delete(findByIdOrThrow(id));
     }
 
+    @Transactional(readOnly = true)
     @Cacheable(value = "schoolRankings", key = "#schoolId + '-' + #minReviews")
     public List<DormRankingDto> getRankings(UUID schoolId, int minReviews) {
         log.info("Fetching rankings for school: {} minReviews: {}", schoolId, minReviews);
         return dormAggregateRepository.findRankedBySchool(schoolId, minReviews).stream()
             .map(da -> {
-                final var dorm = dormRepository.findById(da.getDormId()).orElseThrow();
+                final var dorm = dormRepository.findById(da.getDormId())
+                    .orElseThrow(() -> new EntityNotFoundException("Dorm not found: " + da.getDormId()));
                 final String raw = reviewRepository.findLatestVisibleReviewText(da.getDormId(), ContentStatus.VISIBLE).orElse(null);
                 final String snippet = raw != null && raw.length() > 140 ? raw.substring(0, 140) : raw;
                 return DormRankingDto.fromAggregate(da, dorm, snippet);
@@ -87,6 +91,7 @@ public class DormService {
             .toList();
     }
 
+    @Transactional(readOnly = true)
     @Cacheable(value = "dormSearch", key = "#schoolId + ':' + #q.toLowerCase()")
     public List<DormDto> search(UUID schoolId, String q) {
         log.info("Searching dorms for school: {} q: {}", schoolId, q);

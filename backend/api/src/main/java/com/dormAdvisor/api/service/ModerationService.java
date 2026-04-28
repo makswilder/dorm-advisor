@@ -13,8 +13,8 @@ import com.dormAdvisor.api.repository.ModerationLogRepository;
 import com.dormAdvisor.api.repository.ReviewRepository;
 import com.dormAdvisor.api.repository.SchoolRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +32,7 @@ public class ModerationService {
     private final ReviewRepository reviewRepository;
     private final ModerationLogRepository moderationLogRepository;
 
+    @Transactional(readOnly = true)
     public List<SchoolDto> getPendingSchools() {
         log.info("Fetching pending schools");
         return schoolRepository.findByStatus(EntityStatus.PENDING).stream()
@@ -39,6 +40,7 @@ public class ModerationService {
             .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<DormDto> getPendingDorms() {
         log.info("Fetching pending dorms");
         return dormRepository.findByStatus(EntityStatus.PENDING).stream()
@@ -46,6 +48,7 @@ public class ModerationService {
             .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<ReviewDto> getPendingReviews() {
         log.info("Fetching pending reviews");
         return reviewRepository.findByStatus(ContentStatus.PENDING).stream()

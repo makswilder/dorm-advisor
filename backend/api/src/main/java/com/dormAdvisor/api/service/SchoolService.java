@@ -7,11 +7,11 @@ import com.dormAdvisor.api.domain.entity.School;
 import com.dormAdvisor.api.domain.entity.enums.EntityStatus;
 import com.dormAdvisor.api.repository.SchoolRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -36,11 +36,13 @@ public class SchoolService {
         return SchoolDto.fromEntity(schoolRepository.save(school));
     }
 
+    @Transactional(readOnly = true)
     public SchoolDto getById(UUID id) {
         log.info("Fetching school: {}", id);
         return SchoolDto.fromEntity(findByIdOrThrow(id));
     }
 
+    @Transactional(readOnly = true)
     public List<SchoolDto> getAll() {
         log.info("Fetching all schools");
         return schoolRepository.findAll().stream()
@@ -65,6 +67,7 @@ public class SchoolService {
         schoolRepository.delete(findByIdOrThrow(id));
     }
 
+    @Transactional(readOnly = true)
     @Cacheable(value = "schoolSearch", key = "#q.toLowerCase()")
     public List<SchoolDto> search(String q) {
         log.info("Searching schools: {}", q);

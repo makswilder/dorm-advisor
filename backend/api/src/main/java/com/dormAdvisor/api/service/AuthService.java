@@ -37,6 +37,9 @@ public class AuthService {
     @Value("${app.auth.token-expiry-minutes:15}")
     private int tokenExpiryMinutes;
 
+    @Value("${app.auth.base-url:http://localhost:8080}")
+    private String baseUrl;
+
     @Transactional
     public void sendMagicLink(String email) {
         final String normalized = email.toLowerCase().trim();
@@ -80,7 +83,7 @@ public class AuthService {
 
         emailService.sendMagicLink(
             user.getEmail(),
-            "http://localhost:8080/api/auth/verify?token=" + rawToken
+            baseUrl + "/api/auth/verify?token=" + rawToken
         );
     }
 

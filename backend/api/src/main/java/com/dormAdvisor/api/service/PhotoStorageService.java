@@ -6,7 +6,7 @@ import com.dormAdvisor.api.domain.entity.enums.ContentStatus;
 import com.dormAdvisor.api.repository.DormRepository;
 import com.dormAdvisor.api.repository.PhotoRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
@@ -113,6 +113,7 @@ public class PhotoStorageService {
         return photoRepository.save(photo);
     }
 
+    @Transactional(readOnly = true)
     public List<Photo> getVisibleByDorm(UUID dormId) {
         return photoRepository.findByDormIdAndStatusOrderByCreatedAtDesc(dormId, ContentStatus.VISIBLE);
     }

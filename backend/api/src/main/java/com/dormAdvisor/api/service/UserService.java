@@ -7,7 +7,7 @@ import com.dormAdvisor.api.domain.entity.User;
 import com.dormAdvisor.api.repository.SchoolRepository;
 import com.dormAdvisor.api.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -34,6 +34,7 @@ public class UserService {
         return UserProfileDto.fromEntity(userRepository.save(user));
     }
 
+    @Transactional(readOnly = true)
     @Cacheable(value = "users")
     public UserProfileDto getUserProfile(final String email) {
         log.info("Fetching profile for user email: {}", email);
@@ -68,6 +69,7 @@ public class UserService {
         log.info("User profile deleted for email: {}", email);
     }
 
+    @Transactional(readOnly = true)
     public User getUserByEmail(final String email) {
         return userRepository.findByEmailNormalized(email.toLowerCase().trim())
             .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
