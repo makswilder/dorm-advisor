@@ -12,6 +12,8 @@ public interface SchoolRepository extends JpaRepository<School, UUID> {
 
     Optional<School> findBySlugAndCountry(String slug, String country);
 
+    Optional<School> findBySlug(String slug);
+
     List<School> findByStatus(EntityStatus status);
 
     List<School> findByNameContainingIgnoreCaseAndStatus(String name, EntityStatus status);

@@ -1,11 +1,14 @@
 package com.dormAdvisor.api.controller;
 
+import com.dormAdvisor.api.domain.dto.DormAnswerDto;
 import com.dormAdvisor.api.domain.dto.DormDto;
+import com.dormAdvisor.api.domain.dto.DormQuestionDto;
 import com.dormAdvisor.api.domain.dto.ModerationActionDto;
 import com.dormAdvisor.api.domain.dto.ReviewDto;
 import com.dormAdvisor.api.domain.dto.SchoolDto;
 import com.dormAdvisor.api.repository.UserRepository;
 import com.dormAdvisor.api.service.ModerationService;
+import com.dormAdvisor.api.service.QAService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +30,7 @@ import java.util.UUID;
 public class ModerationController {
 
     private final ModerationService moderationService;
+    private final QAService qaService;
     private final UserRepository userRepository;
 
     @GetMapping("/schools/pending")
@@ -102,6 +106,40 @@ public class ModerationController {
     ) {
         log.info("POST /api/admin/reviews/{}/reject", id);
         return ResponseEntity.ok(moderationService.rejectReview(id, moderatorId(authentication), dto.reason()));
+    }
+
+    @GetMapping("/questions/pending")
+    public ResponseEntity<List<DormQuestionDto>> pendingQuestions() {
+        return ResponseEntity.ok(qaService.getPending());
+    }
+
+    @PostMapping("/questions/{id}/approve")
+    public ResponseEntity<DormQuestionDto> approveQuestion(@PathVariable UUID id) {
+        log.info("POST /api/admin/questions/{}/approve", id);
+        return ResponseEntity.ok(qaService.approveQuestion(id));
+    }
+
+    @PostMapping("/questions/{id}/reject")
+    public ResponseEntity<DormQuestionDto> rejectQuestion(@PathVariable UUID id) {
+        log.info("POST /api/admin/questions/{}/reject", id);
+        return ResponseEntity.ok(qaService.rejectQuestion(id));
+    }
+
+    @GetMapping("/answers/pending")
+    public ResponseEntity<List<DormAnswerDto>> pendingAnswers() {
+        return ResponseEntity.ok(qaService.getPendingAnswers());
+    }
+
+    @PostMapping("/answers/{id}/approve")
+    public ResponseEntity<DormAnswerDto> approveAnswer(@PathVariable UUID id) {
+        log.info("POST /api/admin/answers/{}/approve", id);
+        return ResponseEntity.ok(qaService.approveAnswer(id));
+    }
+
+    @PostMapping("/answers/{id}/reject")
+    public ResponseEntity<DormAnswerDto> rejectAnswer(@PathVariable UUID id) {
+        log.info("POST /api/admin/answers/{}/reject", id);
+        return ResponseEntity.ok(qaService.rejectAnswer(id));
     }
 
     private UUID moderatorId(Authentication authentication) {

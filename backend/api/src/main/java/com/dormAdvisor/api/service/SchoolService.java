@@ -76,6 +76,15 @@ public class SchoolService {
             .toList();
     }
 
+    @Transactional(readOnly = true)
+    public SchoolDto findBySlug(String slug) {
+        log.info("Fetching school by slug: {}", slug);
+        return SchoolDto.fromEntity(
+            schoolRepository.findBySlug(slug)
+                .orElseThrow(() -> new EntityNotFoundException("School not found: " + slug))
+        );
+    }
+
     private School findByIdOrThrow(UUID id) {
         return schoolRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("School not found: " + id));

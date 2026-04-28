@@ -46,6 +46,11 @@ public class SchoolController {
         return ResponseEntity.ok(schoolService.search(q));
     }
 
+    @GetMapping("/by-slug/{slug}")
+    public ResponseEntity<SchoolDto> getBySlug(@PathVariable String slug) {
+        return ResponseEntity.ok(schoolService.findBySlug(slug));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<SchoolDto> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(schoolService.getById(id));

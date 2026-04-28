@@ -6,6 +6,7 @@ import com.dormAdvisor.api.domain.dto.DormRankingDto;
 import com.dormAdvisor.api.domain.dto.DormUpdateDto;
 import com.dormAdvisor.api.domain.entity.Dorm;
 import com.dormAdvisor.api.domain.entity.enums.ContentStatus;
+import com.dormAdvisor.api.domain.entity.enums.DormCategory;
 import com.dormAdvisor.api.domain.entity.enums.EntityStatus;
 import com.dormAdvisor.api.repository.DormAggregateRepository;
 import com.dormAdvisor.api.repository.DormRepository;
@@ -77,10 +78,13 @@ public class DormService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "schoolRankings", key = "#schoolId + '-' + #minReviews")
-    public List<DormRankingDto> getRankings(UUID schoolId, int minReviews) {
-        log.info("Fetching rankings for school: {} minReviews: {}", schoolId, minReviews);
-        return dormAggregateRepository.findRankedBySchool(schoolId, minReviews).stream()
+    @Cacheable(value = "schoolRankings", key = "#schoolId + '-' + #minReviews + '-' + #category")
+    public List<DormRankingDto> getRankings(UUID schoolId, int minReviews, DormCategory category) {
+        log.info("Fetching rankings for school: {} minReviews: {} category: {}", schoolId, minReviews, category);
+        final var aggregates = category != null
+            ? dormAggregateRepository.findRankedBySchoolAndCategory(schoolId, minReviews, category.name())
+            : dormAggregateRepository.findRankedBySchool(schoolId, minReviews);
+        return aggregates.stream()
             .map(da -> {
                 final var dorm = dormRepository.findById(da.getDormId())
                     .orElseThrow(() -> new EntityNotFoundException("Dorm not found: " + da.getDormId()));
@@ -89,6 +93,15 @@ public class DormService {
                 return DormRankingDto.fromAggregate(da, dorm, snippet);
             })
             .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public DormDto getBySchoolAndSlug(UUID schoolId, String slug) {
+        log.info("Fetching dorm by school: {} slug: {}", schoolId, slug);
+        return DormDto.fromEntity(
+            dormRepository.findBySchoolIdAndSlug(schoolId, slug)
+                .orElseThrow(() -> new EntityNotFoundException("Dorm not found: " + slug))
+        );
     }
 
     @Transactional(readOnly = true)

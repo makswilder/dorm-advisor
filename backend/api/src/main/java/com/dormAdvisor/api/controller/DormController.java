@@ -4,6 +4,7 @@ import com.dormAdvisor.api.domain.dto.DormCreateDto;
 import com.dormAdvisor.api.domain.dto.DormDto;
 import com.dormAdvisor.api.domain.dto.DormRankingDto;
 import com.dormAdvisor.api.domain.dto.DormUpdateDto;
+import com.dormAdvisor.api.domain.entity.enums.DormCategory;
 import com.dormAdvisor.api.service.DormService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,14 +46,20 @@ public class DormController {
     @GetMapping("/schools/{schoolId}/dorms/rankings")
     public ResponseEntity<List<DormRankingDto>> getRankings(
         @PathVariable UUID schoolId,
-        @RequestParam(defaultValue = "3") int minReviews
+        @RequestParam(defaultValue = "3") int minReviews,
+        @RequestParam(required = false) DormCategory category
     ) {
-        return ResponseEntity.ok(dormService.getRankings(schoolId, minReviews));
+        return ResponseEntity.ok(dormService.getRankings(schoolId, minReviews, category));
     }
 
     @GetMapping("/schools/{schoolId}/dorms/search")
     public ResponseEntity<List<DormDto>> search(@PathVariable UUID schoolId, @RequestParam String q) {
         return ResponseEntity.ok(dormService.search(schoolId, q));
+    }
+
+    @GetMapping("/schools/{schoolId}/dorms/by-slug/{slug}")
+    public ResponseEntity<DormDto> getBySlug(@PathVariable UUID schoolId, @PathVariable String slug) {
+        return ResponseEntity.ok(dormService.getBySchoolAndSlug(schoolId, slug));
     }
 
     @GetMapping("/dorms/{id}")
