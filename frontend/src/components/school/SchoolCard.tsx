@@ -19,14 +19,14 @@ export function SchoolCard({ school }: Props) {
   return (
     <Link
       href={`/dorms/${school.slug}`}
-      className="block relative rounded-xl overflow-hidden h-44 w-full hover:shadow-lg transition-shadow group"
+      className="block relative rounded-xl overflow-hidden h-44 w-full hover:shadow-lg transition-shadow group/card"
     >
       {photo ? (
         <Image
           src={photo}
           alt={school.name}
           fill
-          className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
+          className="object-cover object-center group-hover/card:scale-105 transition-transform duration-300"
           sizes="(max-width: 768px) 100vw, 208px"
         />
       ) : (
@@ -36,7 +36,7 @@ export function SchoolCard({ school }: Props) {
         />
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+      <div className="absolute inset-0 bg-black/0 group-hover/card:bg-black/10 transition-colors" />
 
       <div className="absolute bottom-0 left-0 right-0 p-4">
         <h3 className="font-bold text-white text-sm leading-tight line-clamp-2 mb-1.5">

@@ -28,12 +28,12 @@ export function Carousel({ title, viewAllHref, children }: CarouselProps) {
         )}
       </div>
 
-      <div className="relative group">
+      <div className="relative group/carousel">
         <button
           onClick={() => scroll("left")}
           className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10
                      bg-white shadow-md rounded-full w-9 h-9 flex items-center justify-center
-                     opacity-0 group-hover:opacity-100 transition-opacity border border-gray-100
+                     opacity-0 group-hover/carousel:opacity-100 transition-opacity border border-gray-100
                      hover:bg-gray-50"
           aria-label="Scroll left"
         >
@@ -52,7 +52,7 @@ export function Carousel({ title, viewAllHref, children }: CarouselProps) {
           onClick={() => scroll("right")}
           className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10
                      bg-white shadow-md rounded-full w-9 h-9 flex items-center justify-center
-                     opacity-0 group-hover:opacity-100 transition-opacity border border-gray-100
+                     opacity-0 group-hover/carousel:opacity-100 transition-opacity border border-gray-100
                      hover:bg-gray-50"
           aria-label="Scroll right"
         >

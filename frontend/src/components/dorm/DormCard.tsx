@@ -21,14 +21,14 @@ export function DormCard({ dorm, schoolSlug, avgOverall, reviewCount }: Props) {
   return (
     <Link
       href={`/reviews/${sSlug}/${slug}`}
-      className="block relative rounded-xl overflow-hidden h-48 w-full hover:shadow-lg transition-shadow group"
+      className="block relative rounded-xl overflow-hidden h-48 w-full hover:shadow-lg transition-shadow group/card"
     >
       <div
         className="absolute inset-0"
         style={{ background: `linear-gradient(135deg, ${from}, ${to})` }}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+      <div className="absolute inset-0 bg-black/0 group-hover/card:bg-black/10 transition-colors" />
 
       <div className="absolute bottom-0 left-0 right-0 p-4">
         <h3 className="font-bold text-white text-sm leading-tight line-clamp-1 mb-0.5">
