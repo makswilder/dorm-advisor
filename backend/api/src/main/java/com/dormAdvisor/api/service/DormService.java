@@ -42,6 +42,8 @@ public class DormService {
             .school(school)
             .name(dto.name())
             .slug(dto.slug())
+            .description(dto.description())
+            .address(dto.address())
             .categories(dto.categories() != null ? new HashSet<>(dto.categories()) : new HashSet<>())
             .build();
         return DormDto.fromEntity(dormRepository.save(dorm));
@@ -66,6 +68,8 @@ public class DormService {
         log.info("Updating dorm: {}", id);
         final var dorm = findByIdOrThrow(id);
         if (dto.name() != null) dorm.setName(dto.name());
+        if (dto.description() != null) dorm.setDescription(dto.description());
+        if (dto.address() != null) dorm.setAddress(dto.address());
         if (dto.status() != null) dorm.setStatus(dto.status());
         if (dto.categories() != null) dorm.setCategories(new HashSet<>(dto.categories()));
         return DormDto.fromEntity(dormRepository.save(dorm));

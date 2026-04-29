@@ -53,6 +53,12 @@ public class Dorm {
     @Column(nullable = false)
     private String slug;
 
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    @Column(length = 255)
+    private String address;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default

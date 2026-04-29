@@ -7,5 +7,7 @@ import java.util.Set;
 public record DormCreateDto(
     String name,
     String slug,
+    String description,
+    String address,
     Set<DormCategory> categories
 ) {}
