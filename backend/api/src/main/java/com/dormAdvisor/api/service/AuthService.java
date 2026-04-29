@@ -56,7 +56,7 @@ public class AuthService {
             ));
 
         // Re-check student verification on every magic link request
-        schoolDomainRepository.findByDomainAndSchoolStatus(domain, EntityStatus.ACTIVE)
+        schoolDomainRepository.findByDomainAndSchoolStatus(domain, EntityStatus.ACTIVE.name())
             .ifPresent(sd -> {
                 user.setVerifiedStudent(true);
                 user.setVerifiedSchool(sd.getSchool());

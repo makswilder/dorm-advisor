@@ -11,9 +11,9 @@ import java.util.UUID;
 
 public interface SchoolDomainRepository extends JpaRepository<SchoolDomain, UUID> {
 
-    @Query("SELECT sd FROM SchoolDomain sd JOIN sd.school s WHERE sd.domain = :domain AND s.status = :status")
+    @Query(value = "SELECT sd.* FROM school_domains sd JOIN schools s ON sd.school_id = s.id WHERE sd.domain = :domain AND s.status = CAST(:status AS entity_status)", nativeQuery = true)
     Optional<SchoolDomain> findByDomainAndSchoolStatus(
         @Param("domain") String domain,
-        @Param("status") EntityStatus status
+        @Param("status") String status
     );
 }
