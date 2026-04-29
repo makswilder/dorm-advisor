@@ -1,11 +1,19 @@
 import Link from "next/link";
+import Image from "next/image";
 import { colorFromName } from "@/lib/colorFromName";
 import type { SchoolDto, SchoolSummaryDto } from "@/lib/types";
+
+const SCHOOL_PHOTOS: Record<string, string> = {
+  "corvinus":               "/corvinus.jpg",
+  "university-of-pecs":     "/pecs.jpg",
+  "university-of-debrecen": "/debrecen.jpg",
+};
 
 type Props = { school: SchoolDto | SchoolSummaryDto };
 
 export function SchoolCard({ school }: Props) {
   const reviewCount = "totalReviews" in school ? school.totalReviews : null;
+  const photo = SCHOOL_PHOTOS[school.slug];
   const { from, to } = colorFromName(school.name);
 
   return (
@@ -13,10 +21,20 @@ export function SchoolCard({ school }: Props) {
       href={`/dorms/${school.slug}`}
       className="block relative rounded-xl overflow-hidden h-44 w-full hover:shadow-lg transition-shadow group"
     >
-      <div
-        className="absolute inset-0"
-        style={{ background: `linear-gradient(135deg, ${from}, ${to})` }}
-      />
+      {photo ? (
+        <Image
+          src={photo}
+          alt={school.name}
+          fill
+          className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
+          sizes="(max-width: 768px) 100vw, 208px"
+        />
+      ) : (
+        <div
+          className="absolute inset-0"
+          style={{ background: `linear-gradient(135deg, ${from}, ${to})` }}
+        />
+      )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
 

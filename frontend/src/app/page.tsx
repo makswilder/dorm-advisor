@@ -4,6 +4,7 @@ import { DormCard } from "@/components/dorm/DormCard";
 import { Carousel } from "@/components/ui/Carousel";
 import { HeroSearch } from "@/components/home/HeroSearch";
 import Link from "next/link";
+import Image from "next/image";
 import { CheckCircle, GraduationCap, MessageSquare, ArrowRight } from "lucide-react";
 
 export default async function HomePage() {
@@ -23,13 +24,17 @@ export default async function HomePage() {
   return (
     <div>
       {/* ── Hero ── */}
-      <section className="relative min-h-[500px] flex items-center justify-center overflow-hidden">
-        {/* Gradient background (replace with <Image fill> once hero-campus.jpg is in /public) */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-700 to-blue-900" />
-        <div className="absolute inset-0 bg-black/40" />
+      <section className="relative min-h-[680px] flex items-center justify-center overflow-hidden">
+        <Image
+          src="/Walpaper.jpg"
+          alt="College campus"
+          fill
+          className="object-cover object-center"
+          priority
+        />
+        <div className="absolute inset-0 bg-black/50" />
 
-        <div className="relative z-10 text-center px-4 py-24 w-full max-w-3xl mx-auto">
-          {/* Verified badge */}
+        <div className="relative z-10 text-center px-4 py-20 w-full max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-2 bg-white/15 text-white text-sm rounded-full px-4 py-1.5 mb-6 border border-white/25">
             <CheckCircle className="w-4 h-4 text-green-400" />
             Reviews from Verified Students
