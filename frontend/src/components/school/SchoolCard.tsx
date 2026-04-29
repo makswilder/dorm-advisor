@@ -5,6 +5,7 @@ import type { SchoolDto, SchoolSummaryDto } from "@/lib/types";
 
 const SCHOOL_PHOTOS: Record<string, string> = {
   "corvinus":               "/corvinus.jpg",
+  "elte":                   "/elte.jpg",
   "university-of-pecs":     "/pecs.jpg",
   "university-of-debrecen": "/debrecen.jpg",
 };
