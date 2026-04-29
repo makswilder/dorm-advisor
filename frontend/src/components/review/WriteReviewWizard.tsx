@@ -5,6 +5,7 @@ import { X, ChevronLeft, Search } from "lucide-react";
 import { searchSchools, getDormsBySchool, createSchool, createDorm } from "@/lib/api";
 import { SignInForm } from "@/components/auth/SignInModal";
 import { ReviewForm } from "@/components/review/ReviewForm";
+import { useAuth } from "@/hooks/useAuth";
 import type { SchoolDto, DormDto } from "@/lib/types";
 
 type Step = "auth" | "school" | "add-school" | "dorm" | "review";
@@ -28,8 +29,10 @@ interface Props {
 }
 
 export function WriteReviewWizard({ onClose }: Props) {
+  const { isLoggedIn } = useAuth();
   const [step, setStep] = useState<Step>("auth");
   const [showSignIn, setShowSignIn] = useState(false);
+  const [pendingAddSchool, setPendingAddSchool] = useState(false);
 
   const [selectedSchool, setSelectedSchool] = useState<SchoolDto | null>(null);
   const [selectedDorm, setSelectedDorm] = useState<DormDto | null>(null);
@@ -102,6 +105,15 @@ export function WriteReviewWizard({ onClose }: Props) {
       setAddError("Could not add school. It may already exist — try searching instead.");
     } finally {
       setAdding(false);
+    }
+  }
+
+  function goToAddSchool() {
+    if (isLoggedIn) {
+      setStep("add-school");
+    } else {
+      setPendingAddSchool(true);
+      setShowSignIn(true);
     }
   }
 
@@ -243,7 +255,7 @@ export function WriteReviewWizard({ onClose }: Props) {
                 <p className="text-sm pt-2">
                   <span className="text-gray-500">Can&apos;t find your school? </span>
                   <button
-                    onClick={() => setStep("add-school")}
+                    onClick={goToAddSchool}
                     className="text-blue-600 font-medium hover:underline"
                   >
                     Add a new school
@@ -385,7 +397,12 @@ export function WriteReviewWizard({ onClose }: Props) {
             <SignInForm
               onSuccess={() => {
                 setShowSignIn(false);
-                setStep("school");
+                if (pendingAddSchool) {
+                  setPendingAddSchool(false);
+                  setStep("add-school");
+                } else {
+                  setStep("school");
+                }
               }}
             />
           </div>

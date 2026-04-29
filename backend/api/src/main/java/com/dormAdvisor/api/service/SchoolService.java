@@ -71,7 +71,7 @@ public class SchoolService {
     @Cacheable(value = "schoolSearch", key = "#q.toLowerCase()")
     public List<SchoolDto> search(String q) {
         log.info("Searching schools: {}", q);
-        return schoolRepository.findByNameContainingIgnoreCaseAndStatus(q, EntityStatus.ACTIVE).stream()
+        return schoolRepository.findByNameContainingIgnoreCaseAndStatus(q, EntityStatus.ACTIVE.name()).stream()
             .map(SchoolDto::fromEntity)
             .toList();
     }
