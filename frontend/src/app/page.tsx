@@ -1,8 +1,10 @@
 import { getHomepage } from "@/lib/api";
 import { SchoolCard } from "@/components/school/SchoolCard";
 import { DormCard } from "@/components/dorm/DormCard";
+import { Carousel } from "@/components/ui/Carousel";
+import { HeroSearch } from "@/components/home/HeroSearch";
 import Link from "next/link";
-import { Star, BookOpen, ArrowRight } from "lucide-react";
+import { CheckCircle, GraduationCap, MessageSquare, ArrowRight } from "lucide-react";
 
 export default async function HomePage() {
   let data;
@@ -13,31 +15,121 @@ export default async function HomePage() {
     data = { topSchools: [], topDormsByReviews: [], highestRatedDorms: [] };
   }
 
+  const hasContent =
+    data.topSchools.length > 0 ||
+    data.topDormsByReviews.length > 0 ||
+    data.highestRatedDorms.length > 0;
+
   return (
     <div>
-      {/* Hero */}
-      <section
-        className="text-white py-24 px-4"
-        style={{ background: "linear-gradient(135deg, #1a2744 0%, #2d3f6b 100%)" }}
-      >
-        <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-4xl sm:text-5xl font-black mb-4 leading-tight">
-            Find the <span className="text-yellow-400">best dorm</span> on campus
+      {/* ── Hero ── */}
+      <section className="relative min-h-[500px] flex items-center justify-center overflow-hidden">
+        {/* Gradient background (replace with <Image fill> once hero-campus.jpg is in /public) */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-700 to-blue-900" />
+        <div className="absolute inset-0 bg-black/40" />
+
+        <div className="relative z-10 text-center px-4 py-24 w-full max-w-3xl mx-auto">
+          {/* Verified badge */}
+          <div className="inline-flex items-center gap-2 bg-white/15 text-white text-sm rounded-full px-4 py-1.5 mb-6 border border-white/25">
+            <CheckCircle className="w-4 h-4 text-green-400" />
+            Reviews from Verified Students
+          </div>
+
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-8 leading-tight">
+            Real College Dorm Reviews
+            <br />
+            from Verified Students
           </h1>
-          <p className="text-lg text-blue-200 mb-8">
-            Real reviews from real students. Rate your dorm. Help future students choose wisely.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+
+          <HeroSearch />
+        </div>
+      </section>
+
+      {/* ── Carousels ── */}
+      {hasContent && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 space-y-14">
+          {data.topSchools.length > 0 && (
+            <Carousel title="Popular Schools" viewAllHref="/all-schools">
+              {data.topSchools.map((school) => (
+                <div key={school.id} className="shrink-0 w-52">
+                  <SchoolCard school={school} />
+                </div>
+              ))}
+            </Carousel>
+          )}
+
+          {data.topDormsByReviews.length > 0 && (
+            <Carousel title="Popular Dorms">
+              {data.topDormsByReviews.map((dorm) => (
+                <div key={dorm.dormId} className="shrink-0 w-56">
+                  <DormCard dorm={dorm} />
+                </div>
+              ))}
+            </Carousel>
+          )}
+
+          {data.highestRatedDorms.length > 0 && (
+            <Carousel title="Highest Rated Dorms">
+              {data.highestRatedDorms.map((dorm) => (
+                <div key={dorm.dormId} className="shrink-0 w-56">
+                  <DormCard dorm={dorm} />
+                </div>
+              ))}
+            </Carousel>
+          )}
+        </div>
+      )}
+
+      {/* ── Feature section 1: Find your school ── */}
+      <section className="bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-20 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div>
+            <span className="text-blue-600 font-semibold text-sm uppercase tracking-wide mb-2 block">
+              Discover
+            </span>
+            <h2 className="text-3xl font-extrabold text-gray-900 mb-4">Find your school</h2>
+            <p className="text-gray-500 text-lg leading-relaxed mb-6">
+              We&apos;ve collected dorm reviews from hundreds of colleges and universities. Search for your
+              school to get started.
+            </p>
             <Link
               href="/all-schools"
-              className="inline-flex items-center gap-2 bg-yellow-400 text-gray-900 font-bold px-6 py-3 rounded-full hover:bg-yellow-300 transition-colors"
+              className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
             >
-              <BookOpen className="w-5 h-5" />
               Browse Schools
+              <ArrowRight className="w-4 h-4" />
             </Link>
+          </div>
+
+          {/* Illustration placeholder */}
+          <div className="bg-blue-50 rounded-2xl h-64 flex items-center justify-center">
+            <GraduationCap className="w-28 h-28 text-blue-200" />
+          </div>
+        </div>
+      </section>
+
+      {/* ── Feature section 2: Write anonymous review ── */}
+      <section className="bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-20 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          {/* Illustration placeholder (left on desktop) */}
+          <div className="bg-indigo-50 rounded-2xl h-64 flex items-center justify-center order-last md:order-first">
+            <MessageSquare className="w-28 h-28 text-indigo-200" />
+          </div>
+
+          <div>
+            <span className="text-indigo-600 font-semibold text-sm uppercase tracking-wide mb-2 block">
+              Share
+            </span>
+            <h2 className="text-3xl font-extrabold text-gray-900 mb-4">
+              Write an anonymous review
+            </h2>
+            <p className="text-gray-500 text-lg leading-relaxed mb-6">
+              Share your experience at your college dorm by writing a review. Your reviews are
+              completely anonymous.
+            </p>
             <Link
               href="/auth/login"
-              className="inline-flex items-center gap-2 border border-white/30 text-white font-semibold px-6 py-3 rounded-full hover:bg-white/10 transition-colors"
+              className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
             >
               Write a Review
               <ArrowRight className="w-4 h-4" />
@@ -46,64 +138,20 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 space-y-16">
-        {/* Popular Schools */}
-        {data.topSchools.length > 0 && (
-          <section>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Popular Schools</h2>
-              <Link href="/all-schools" className="text-blue-600 text-sm font-medium hover:underline flex items-center gap-1">
-                View all <ArrowRight className="w-3 h-3" />
-              </Link>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {data.topSchools.map((school) => (
-                <SchoolCard key={school.id} school={school} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Most Reviewed Dorms */}
-        {data.topDormsByReviews.length > 0 && (
-          <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Most Reviewed Dorms</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {data.topDormsByReviews.map((dorm) => (
-                <DormCard key={dorm.dormId} dorm={dorm} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Highest Rated Dorms */}
-        {data.highestRatedDorms.length > 0 && (
-          <section>
-            <div className="flex items-center gap-2 mb-6">
-              <Star className="w-6 h-6 text-yellow-400 fill-yellow-400" />
-              <h2 className="text-2xl font-bold text-gray-900">Highest Rated Dorms</h2>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {data.highestRatedDorms.map((dorm) => (
-                <DormCard key={dorm.dormId} dorm={dorm} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Empty state */}
-        {!data.topSchools.length && !data.topDormsByReviews.length && (
-          <div className="text-center py-16">
-            <p className="text-gray-400 mb-4">No data yet — be the first to add a school and dorm!</p>
-            <Link
-              href="/auth/login"
-              className="inline-flex items-center gap-2 bg-yellow-400 text-gray-900 font-bold px-5 py-2.5 rounded-full hover:bg-yellow-300 transition-colors"
-            >
-              Get Started <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        )}
-      </div>
+      {/* ── Empty state (no data yet) ── */}
+      {!hasContent && (
+        <div className="max-w-2xl mx-auto px-4 py-24 text-center">
+          <GraduationCap className="w-16 h-16 text-gray-200 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-gray-700 mb-2">No dorms listed yet</h2>
+          <p className="text-gray-400 mb-6">Be the first to add a school and write a review!</p>
+          <Link
+            href="/auth/login"
+            className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+          >
+            Get Started <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

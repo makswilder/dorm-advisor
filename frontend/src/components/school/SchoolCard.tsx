@@ -1,37 +1,40 @@
 import Link from "next/link";
-import { MapPin, BookOpen } from "lucide-react";
+import { colorFromName } from "@/lib/colorFromName";
 import type { SchoolDto, SchoolSummaryDto } from "@/lib/types";
 
 type Props = { school: SchoolDto | SchoolSummaryDto };
 
 export function SchoolCard({ school }: Props) {
   const reviewCount = "totalReviews" in school ? school.totalReviews : null;
+  const { from, to } = colorFromName(school.name);
+
   return (
     <Link
       href={`/dorms/${school.slug}`}
-      className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 hover:shadow-md hover:border-blue-200 transition-all group"
+      className="block relative rounded-xl overflow-hidden h-44 w-full hover:shadow-lg transition-shadow group"
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: "#1a2744" }}>
-          <BookOpen className="w-5 h-5 text-yellow-400" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors">
-            {school.name}
-          </h3>
-          {(school.city || school.state) && (
-            <div className="flex items-center gap-1 text-gray-400 text-xs mt-0.5">
-              <MapPin className="w-3 h-3" />
-              <span>{[school.city, school.state].filter(Boolean).join(", ")}</span>
-            </div>
-          )}
-        </div>
+      <div
+        className="absolute inset-0"
+        style={{ background: `linear-gradient(135deg, ${from}, ${to})` }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+
+      <div className="absolute bottom-0 left-0 right-0 p-4">
+        <h3 className="font-bold text-white text-sm leading-tight line-clamp-2 mb-1.5">
+          {school.name}
+        </h3>
+        {(school.city || school.state) && (
+          <p className="text-white/60 text-xs mb-1.5">
+            {[school.city, school.state].filter(Boolean).join(", ")}
+          </p>
+        )}
+        {reviewCount !== null && (
+          <span className="inline-block bg-white/20 text-white text-xs rounded-full px-2 py-0.5">
+            {reviewCount.toLocaleString()} {reviewCount === 1 ? "review" : "reviews"}
+          </span>
+        )}
       </div>
-      {reviewCount !== null && (
-        <p className="text-xs text-gray-400 mt-3">
-          {reviewCount.toLocaleString()} {reviewCount === 1 ? "review" : "reviews"}
-        </p>
-      )}
     </Link>
   );
 }
