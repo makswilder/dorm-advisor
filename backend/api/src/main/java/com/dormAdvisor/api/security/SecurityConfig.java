@@ -62,8 +62,8 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
-                // GET /api/auth/google triggers Google redirect
-                .authorizationEndpoint(auth -> auth.baseUri("/api/auth"))
+                // GET /api/auth/oauth2/google triggers Google redirect
+                .authorizationEndpoint(auth -> auth.baseUri("/api/auth/oauth2"))
                 // Google redirects back to /api/auth/google/callback
                 .redirectionEndpoint(redirect -> redirect.baseUri("/api/auth/google/callback"))
                 .successHandler(oAuth2AuthenticationSuccessHandler)

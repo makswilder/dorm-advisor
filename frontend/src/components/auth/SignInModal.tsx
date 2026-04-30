@@ -46,7 +46,7 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
       <div>
         <p className="text-sm font-semibold text-gray-800 mb-2">Continue with Google</p>
         <a
-          href={`${API_BASE}/api/auth/google`}
+          href={`${API_BASE}/api/auth/oauth2/google`}
           className="w-full flex items-center justify-center gap-3 border border-gray-200 rounded-lg px-4 py-3 font-medium text-gray-700 hover:bg-gray-50 transition-colors"
         >
           {/* Google G logo SVG */}
