@@ -57,10 +57,7 @@ public class PhotoStorageService {
         if (!dormRepository.existsById(dormId)) {
             throw new EntityNotFoundException("Dorm not found: " + dormId);
         }
-
         byte[] bytes = file.getBytes();
-
-        // Detect real content type from bytes — not from the request header, which can be spoofed
         String detectedType = tika.detect(bytes);
         if (!ALLOWED_TYPES.contains(detectedType)) {
             throw new IllegalArgumentException("Only JPEG, PNG, and WebP images are allowed. Detected: " + detectedType);
@@ -70,28 +67,18 @@ public class PhotoStorageService {
         Path thumbDir = baseDir.resolve("thumbs");
         Files.createDirectories(baseDir);
         Files.createDirectories(thumbDir);
-
         String storageKey = UUID.randomUUID() + ".jpg";
         Path target = baseDir.resolve(storageKey);
         Path thumbTarget = thumbDir.resolve(storageKey);
-
-        // Compress + resize main image
         Thumbnails.of(new ByteArrayInputStream(bytes))
             .size(maxWidth, maxHeight)
-            .keepAspectRatio(true)
-            .outputFormat("jpg")
-            .outputQuality(quality)
-            .toFile(target.toFile());
+            .keepAspectRatio(true).outputFormat("jpg")
+            .outputQuality(quality).toFile(target.toFile());
 
-        // Generate thumbnail
         Thumbnails.of(new ByteArrayInputStream(bytes))
             .size(THUMB_WIDTH, THUMB_HEIGHT)
-            .keepAspectRatio(true)
-            .outputFormat("jpg")
-            .outputQuality(THUMB_QUALITY)
-            .toFile(thumbTarget.toFile());
-
-        // Read compressed dimensions
+            .keepAspectRatio(true).outputFormat("jpg")
+            .outputQuality(THUMB_QUALITY).toFile(thumbTarget.toFile());
         BufferedImage compressed = ImageIO.read(target.toFile());
         int width = compressed != null ? compressed.getWidth() : 0;
         int height = compressed != null ? compressed.getHeight() : 0;
@@ -100,16 +87,11 @@ public class PhotoStorageService {
             dormId, storageKey, width, height, bytes.length, Files.size(target));
 
         Photo photo = Photo.builder()
-            .dormId(dormId)
-            .userId(userId)
+            .dormId(dormId).userId(userId)
             .authorType(userId != null ? AuthorType.USER : AuthorType.GUEST)
             .storageKey(storageKey)
-            .width(width)
-            .height(height)
-            .caption(caption)
-            .status(ContentStatus.PENDING)
-            .build();
-
+            .width(width).height(height)
+            .caption(caption).status(ContentStatus.PENDING).build();
         return photoRepository.save(photo);
     }
 

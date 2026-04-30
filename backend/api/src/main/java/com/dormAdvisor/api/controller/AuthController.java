@@ -45,7 +45,7 @@ public class AuthController {
         log.info("Token verification request for token {}...", token.substring(0, Math.min(8, token.length())));
         final var authResponse = authService.verifyToken(token);
         setAuthCookie(response, authResponse.token());
-        return ResponseEntity.ok(Map.of("isVerifiedStudent", authResponse.isVerifiedStudent()));
+        return ResponseEntity.ok(Map.of("isVerifiedStudent", authResponse.verified()));
     }
 
     @PostMapping("/logout")

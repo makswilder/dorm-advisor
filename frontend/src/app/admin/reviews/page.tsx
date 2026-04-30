@@ -17,7 +17,6 @@ export default function AdminReviewsPage() {
     queryKey: ["admin", "reviews"],
     queryFn: () => getPendingReviews().then((r) => r.data),
   });
-
   async function handleApprove(id: string) {
     await approveReview(id, {});
     qc.invalidateQueries({ queryKey: ["admin", "reviews"] });
@@ -29,9 +28,7 @@ export default function AdminReviewsPage() {
     setRejectReason("");
     qc.invalidateQueries({ queryKey: ["admin", "reviews"] });
   }
-
   if (isLoading) return <div className="flex justify-center py-10"><Spinner className="w-6 h-6 text-blue-400" /></div>;
-
   return (
     <div>
       <h2 className="text-xl font-bold text-gray-800 mb-4">Pending Reviews ({reviews?.length ?? 0})</h2>
