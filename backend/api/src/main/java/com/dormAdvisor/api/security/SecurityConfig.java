@@ -19,6 +19,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final CorsConfig corsConfig;
 
     @Bean
@@ -65,6 +66,7 @@ public class SecurityConfig {
                 // Google redirects back to /api/auth/google/callback
                 .redirectionEndpoint(redirect -> redirect.baseUri("/api/auth/google/callback"))
                 .successHandler(oAuth2AuthenticationSuccessHandler)
+                .failureHandler(oAuth2AuthenticationFailureHandler)
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .build();

@@ -1,14 +1,12 @@
 package com.dormAdvisor.api.security;
 
-import com.dormAdvisor.api.domain.dto.auth.AuthResponseDto;
 import com.dormAdvisor.api.domain.entity.User;
 import com.dormAdvisor.api.repository.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -24,7 +22,10 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
-    private final ObjectMapper objectMapper;
+
+    // @Value fields must NOT be final (conflicts with @RequiredArgsConstructor)
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
 
     @Override
     public void onAuthenticationSuccess(
@@ -53,8 +54,8 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
         final String jwt = jwtService.generateToken(normalized);
 
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setStatus(HttpServletResponse.SC_OK);
-        objectMapper.writeValue(response.getWriter(), new AuthResponseDto(jwt, false));
+        // Redirect the browser back to the frontend — the /auth/callback page
+        // reads the token from the URL, stores it in localStorage, then navigates home.
+        response.sendRedirect(frontendUrl + "/auth/callback?token=" + jwt);
     }
 }

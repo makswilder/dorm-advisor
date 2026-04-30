@@ -1,15 +1,63 @@
 services:
-  postgres:
-    image: 'postgres:latest'
-    environment:
-      - 'POSTGRES_DB=mydatabase'
-      - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
-    ports:
-      - '5432'
 
+  # ── PostgreSQL ────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB:       dormadvisor
+      POSTGRES_USER:     postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"   # exposed only to localhost for debugging
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d dormadvisor"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  # ── Mailpit (catch-all SMTP + web UI) ────────────────────────────────────
   mailpit:
     image: axllent/mailpit
     ports:
-      - '1025:1025'   # SMTP
-      - '8025:8025'   # Web UI — http://localhost:8025
+      - "8025:8025"   # web UI  →  http://localhost:8025
+
+  # ── Spring Boot backend ───────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend/api
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    environment:
+      SPRING_DATASOURCE_URL:      jdbc:postgresql://postgres:5432/dormadvisor
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_MAIL_HOST:           mailpit
+      SPRING_MAIL_PORT:           1025
+      APP_AUTH_BASE_URL:          http://localhost:8080
+      APP_FRONTEND_URL:           http://localhost:3000
+      APP_PHOTO_UPLOAD_DIR:       /app/uploads/photos
+    volumes:
+      - uploads:/app/uploads
+    ports:
+      - "8080:8080"
+
+  # ── Next.js frontend ──────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+    depends_on:
+      - backend
+    environment:
+      # Server-side rewrites use the internal Docker hostname
+      API_URL: http://backend:8080
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_data:
+  uploads:
