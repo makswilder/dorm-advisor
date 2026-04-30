@@ -28,21 +28,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-        @NonNull HttpServletRequest request,
-        @NonNull HttpServletResponse response,
-        @NonNull FilterChain chain
+        @NonNull HttpServletRequest request,  @NonNull HttpServletResponse response,  @NonNull FilterChain chain
     ) throws ServletException, IOException {
-
         final String token = extractToken(request);
         if (token == null) {
             chain.doFilter(request, response);
             return;
-        }
-        if (!jwtService.isValid(token)) {
+        } if (!jwtService.isValid(token)) {
             chain.doFilter(request, response);
             return;
         }
-
         final String email = jwtService.extractSubject(token);
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             userRepository.findByEmailNormalized(email).ifPresent(user -> {
@@ -51,13 +46,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 );
                 SecurityContextHolder.getContext().setAuthentication(auth);
             });
-        }
-
-        chain.doFilter(request, response);
+        } chain.doFilter(request, response);
     }
 
-    // Reads the JWT from the HttpOnly cookie first; falls back to the Authorization
-    // header so curl / Postman / CLI tools continue to work during development.
     private String extractToken(HttpServletRequest request) {
         if (request.getCookies() != null) {
             return Arrays.stream(request.getCookies())
