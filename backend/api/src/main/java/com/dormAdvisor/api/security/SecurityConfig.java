@@ -32,7 +32,8 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST, "/api/auth/magic-link").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/auth/verify").permitAll()
+                .requestMatchers(HttpMethod.GET,  "/api/auth/verify").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/logout").permitAll()
                 // Public browsing — no JWT required
                 .requestMatchers(HttpMethod.GET, "/api/public/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/schools").permitAll()

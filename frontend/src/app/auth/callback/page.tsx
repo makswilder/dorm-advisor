@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, XCircle } from "lucide-react";
-import { setToken } from "@/lib/auth";
 import { Suspense, useState } from "react";
 
 function CallbackInner() {
@@ -12,15 +11,12 @@ function CallbackInner() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    const token = searchParams.get("token");
     const oauthError = searchParams.get("error");
-
-    if (oauthError || !token) {
+    if (oauthError) {
       setError(true);
       return;
     }
-
-    setToken(token);
+    // Cookie was set server-side by the backend — just navigate home
     router.replace("/");
   }, [searchParams, router]);
 

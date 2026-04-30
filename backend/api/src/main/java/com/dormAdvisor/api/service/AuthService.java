@@ -45,7 +45,6 @@ public class AuthService {
         final String normalized = email.toLowerCase().trim();
         final String domain = normalized.substring(normalized.indexOf('@') + 1);
 
-        // Find existing user or create new one
         final User user = userRepository.findByEmailNormalized(normalized)
             .orElseGet(() -> userRepository.save(
                 User.builder()
@@ -55,7 +54,6 @@ public class AuthService {
                     .build()
             ));
 
-        // Re-check student verification on every magic link request
         schoolDomainRepository.findByDomainAndSchoolStatus(domain, EntityStatus.ACTIVE.name())
             .ifPresent(sd -> {
                 user.setVerifiedStudent(true);
@@ -63,7 +61,6 @@ public class AuthService {
                 userRepository.save(user);
             });
 
-        // Generate cryptographically secure raw token
         final byte[] tokenBytes = new byte[32];
         new SecureRandom().nextBytes(tokenBytes);
         final String rawToken = HexFormat.of().formatHex(tokenBytes);

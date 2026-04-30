@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import { verifyToken } from "@/lib/api";
-import { setToken } from "@/lib/auth";
 import { Suspense } from "react";
 
 function VerifyInner() {
@@ -19,8 +18,8 @@ function VerifyInner() {
       return;
     }
     verifyToken(token)
-      .then((res) => {
-        setToken(res.data.token);
+      .then(() => {
+        // Cookie is set by the backend — nothing to store on the frontend
         setStatus("success");
         setTimeout(() => router.push("/"), 1500);
       })

@@ -3,6 +3,7 @@ package com.dormAdvisor.api.security;
 import com.dormAdvisor.api.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 
 @Slf4j
@@ -31,13 +33,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         @NonNull FilterChain chain
     ) throws ServletException, IOException {
 
-        final String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        final String token = extractToken(request);
+        if (token == null) {
             chain.doFilter(request, response);
             return;
         }
-
-        final String token = authHeader.substring(7);
         if (!jwtService.isValid(token)) {
             chain.doFilter(request, response);
             return;
@@ -54,5 +54,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         chain.doFilter(request, response);
+    }
+
+    // Reads the JWT from the HttpOnly cookie first; falls back to the Authorization
+    // header so curl / Postman / CLI tools continue to work during development.
+    private String extractToken(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            return Arrays.stream(request.getCookies())
+                .filter(c -> "da_jwt".equals(c.getName()))
+                .map(Cookie::getValue)
+                .findFirst()
+                .orElse(null);
+        }
+        final String header = request.getHeader("Authorization");
+        if (header != null && header.startsWith("Bearer ")) {
+            return header.substring(7);
+        }
+        return null;
     }
 }

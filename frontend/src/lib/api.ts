@@ -1,7 +1,5 @@
 import axios from "axios";
-import { getToken } from "./auth";
 import type {
-  AuthResponseDto,
   DormAnswerCreateDto,
   DormAnswerDto,
   DormCategory,
@@ -25,22 +23,18 @@ import type {
 
 const client = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
-});
-
-client.interceptors.request.use((config) => {
-  const token = getToken();
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
+  withCredentials: true, // send the HttpOnly da_jwt cookie on every request
 });
 
 // Auth
 export const sendMagicLink = (email: string) =>
   client.post("/api/auth/magic-link", { email });
 
-export const verifyToken = (token: string): Promise<{ data: AuthResponseDto }> =>
-  client.get(`/api/auth/verify?token=${token}`);
+export const verifyToken = (token: string) =>
+  client.get<{ isVerifiedStudent: boolean }>(`/api/auth/verify?token=${token}`);
+
+export const logoutApi = () =>
+  client.post("/api/auth/logout");
 
 // Users
 export const getMe = (): Promise<{ data: UserDto }> =>
