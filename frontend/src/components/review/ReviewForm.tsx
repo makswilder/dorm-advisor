@@ -123,18 +123,20 @@ export function ReviewForm({ dormId, onSuccess, onClose, embedded = false }: Pro
 
   const formContent = (
     <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-5">
-      {RATING_FIELDS.map(({ key, label }) => (
-        <div key={key}>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-          <StarRatingInput
-            value={values[key] as number}
-            onChange={(v) => setValue(key, v)}
-          />
-          {errors[key] && (
-            <p className="text-red-500 text-xs mt-1">{errors[key]?.message}</p>
-          )}
-        </div>
-      ))}
+      <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+        {RATING_FIELDS.map(({ key, label }) => (
+          <div key={key}>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+            <StarRatingInput
+              value={values[key] as number}
+              onChange={(v) => setValue(key, v)}
+            />
+            {errors[key] && (
+              <p className="text-red-500 text-xs mt-1">{errors[key]?.message}</p>
+            )}
+          </div>
+        ))}
+      </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
