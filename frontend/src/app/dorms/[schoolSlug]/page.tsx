@@ -23,6 +23,7 @@ export default function DormListPage() {
 
   const [school, setSchool] = useState<SchoolDto | null>(null);
   const [dorms, setDorms] = useState<DormDto[]>([]);
+  const [rankMap, setRankMap] = useState<Record<string, { avgOverall: number; reviewCount: number }>>({});
   const [loading, setLoading] = useState(true);
   const [categoryFilter, setCategoryFilter] = useState<DormCategory | "ALL">("ALL");
   const [sortBy, setSortBy] = useState<"name" | "reviews" | "rating">("name");
@@ -32,8 +33,16 @@ export default function DormListPage() {
       try {
         const schoolRes = await getSchoolBySlug(schoolSlug);
         setSchool(schoolRes.data);
-        const dormsRes = await getDormsBySchool(schoolRes.data.id);
+        const [dormsRes, rankingsRes] = await Promise.all([
+          getDormsBySchool(schoolRes.data.id),
+          getDormRankings(schoolRes.data.id, 0),
+        ]);
         setDorms(dormsRes.data.filter((d) => d.status === "ACTIVE"));
+        const map: Record<string, { avgOverall: number; reviewCount: number }> = {};
+        for (const r of rankingsRes.data) {
+          map[r.dormSlug] = { avgOverall: r.avgOverall, reviewCount: r.reviewCount };
+        }
+        setRankMap(map);
       } catch {
         // ignore
       } finally {
@@ -43,9 +52,13 @@ export default function DormListPage() {
     load();
   }, [schoolSlug]);
 
-  const filtered = dorms.filter((d) =>
-    categoryFilter === "ALL" ? true : d.categories.includes(categoryFilter)
-  );
+  const filtered = dorms
+    .filter((d) => categoryFilter === "ALL" || d.categories.includes(categoryFilter))
+    .sort((a, b) => {
+      if (sortBy === "reviews") return (rankMap[b.slug]?.reviewCount ?? 0) - (rankMap[a.slug]?.reviewCount ?? 0);
+      if (sortBy === "rating")  return (rankMap[b.slug]?.avgOverall  ?? 0) - (rankMap[a.slug]?.avgOverall  ?? 0);
+      return a.name.localeCompare(b.name);
+    });
 
   if (loading) {
     return (
@@ -133,7 +146,13 @@ export default function DormListPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((dorm) => (
-            <DormCard key={dorm.id} dorm={dorm} schoolSlug={schoolSlug} />
+            <DormCard
+              key={dorm.id}
+              dorm={dorm}
+              schoolSlug={schoolSlug}
+              avgOverall={rankMap[dorm.slug]?.avgOverall}
+              reviewCount={rankMap[dorm.slug]?.reviewCount}
+            />
           ))}
         </div>
       )}

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { X, ChevronLeft, Search } from "lucide-react";
-import { searchSchools, getDormsBySchool, createSchool, createDorm } from "@/lib/api";
+import { getAllSchools, getDormsBySchool, createSchool, createDorm } from "@/lib/api";
 import { SignInForm } from "@/components/auth/SignInModal";
 import { ReviewForm } from "@/components/review/ReviewForm";
 import { useAuth } from "@/hooks/useAuth";
@@ -42,9 +42,7 @@ export function WriteReviewWizard({ onClose }: Props) {
   const [selectedDorm, setSelectedDorm] = useState<DormDto | null>(null);
 
   const [schoolQuery, setSchoolQuery] = useState("");
-  const [schoolResults, setSchoolResults] = useState<SchoolDto[]>([]);
-  const [schoolSearching, setSchoolSearching] = useState(false);
-  const schoolTimeout = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const [allSchools, setAllSchools] = useState<SchoolDto[]>([]);
 
   const [dorms, setDorms] = useState<DormDto[]>([]);
   const [dormQuery, setDormQuery] = useState("");
@@ -56,25 +54,16 @@ export function WriteReviewWizard({ onClose }: Props) {
   const [addError, setAddError] = useState("");
 
   useEffect(() => {
-    if (!schoolQuery.trim()) {
-      setSchoolResults([]);
-      setSchoolSearching(false);
-      return;
-    }
-    clearTimeout(schoolTimeout.current);
-    setSchoolSearching(true);
-    schoolTimeout.current = setTimeout(async () => {
-      try {
-        const res = await searchSchools(schoolQuery);
-        setSchoolResults(res.data.slice(0, 8));
-      } catch {
-        setSchoolResults([]);
-      } finally {
-        setSchoolSearching(false);
-      }
-    }, 300);
-    return () => clearTimeout(schoolTimeout.current);
-  }, [schoolQuery]);
+    getAllSchools()
+      .then((res) => setAllSchools(res.data))
+      .catch(() => setAllSchools([]));
+  }, []);
+
+  const schoolResults = schoolQuery.trim()
+    ? allSchools.filter((s) =>
+        s.name.toLowerCase().includes(schoolQuery.toLowerCase())
+      ).slice(0, 8)
+    : [];
 
   useEffect(() => {
     if (step !== "dorm" || !selectedSchool) return;
@@ -224,10 +213,6 @@ export function WriteReviewWizard({ onClose }: Props) {
                   />
                 </div>
 
-                {schoolSearching && (
-                  <p className="text-xs text-gray-400 px-1">Searching…</p>
-                )}
-
                 {schoolResults.length > 0 && (
                   <div className="border border-gray-100 rounded-xl overflow-hidden shadow-sm">
                     {schoolResults.map((school) => (
@@ -250,7 +235,7 @@ export function WriteReviewWizard({ onClose }: Props) {
                   </div>
                 )}
 
-                {schoolQuery.trim() && !schoolSearching && schoolResults.length === 0 && (
+                {schoolQuery.trim() && schoolResults.length === 0 && (
                   <p className="text-sm text-gray-500 px-1">
                     No schools found for &quot;{schoolQuery}&quot;.
                   </p>
