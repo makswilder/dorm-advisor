@@ -1,5 +1,5 @@
 # ── Stage 1: build ─────────────────────────────────────────────────────────
-FROM eclipse-temurin:21-jdk-jammy AS build
+FROM --platform=linux/amd64 eclipse-temurin:21-jdk-jammy AS build
 WORKDIR /app
 
 COPY mvnw .
@@ -14,7 +14,7 @@ COPY src/ src/
 RUN ./mvnw package -DskipTests -B -q
 
 # ── Stage 2: runtime ────────────────────────────────────────────────────────
-FROM eclipse-temurin:21-jre-jammy
+FROM --platform=linux/amd64 eclipse-temurin:21-jre-jammy
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 VOLUME /app/uploads
