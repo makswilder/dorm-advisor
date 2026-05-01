@@ -28,7 +28,7 @@ export function ReviewCard({ review }: Props) {
       </div>
 
       {review.reviewText && (
-        <p className="text-gray-700 text-sm leading-relaxed mb-4">{review.reviewText}</p>
+        <p className="text-gray-700 text-sm leading-relaxed mb-4 break-words">{review.reviewText}</p>
       )}
 
       {review.photos && review.photos.length > 0 && (
