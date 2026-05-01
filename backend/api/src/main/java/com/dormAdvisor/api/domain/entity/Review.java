@@ -48,7 +48,7 @@ public class Review {
     private User user;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "author_type", nullable = false)
+    @Column(name = "author_type", nullable = false, columnDefinition = "author_type_enum")
     @Builder.Default
     private AuthorType authorType = AuthorType.GUEST;
 
@@ -90,7 +90,7 @@ public class Review {
     private boolean isVerifiedAtPost = false;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "content_status")
     @Builder.Default
     private ContentStatus status = ContentStatus.VISIBLE;
 
