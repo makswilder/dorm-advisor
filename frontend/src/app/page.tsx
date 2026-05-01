@@ -26,7 +26,7 @@ export default async function HomePage() {
       {/* ── Hero ── */}
       <section className="relative min-h-[680px] flex items-center justify-center overflow-hidden">
         <Image
-          src="/Walpaper.jpg"
+          src="/MainPicture.jpg"
           alt="College campus"
           fill
           className="object-cover object-center"

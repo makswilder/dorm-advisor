@@ -8,6 +8,11 @@ const SCHOOL_PHOTOS: Record<string, string> = {
   "elte":                   "/elte.jpg",
   "university-of-pecs":     "/pecs.jpg",
   "university-of-debrecen": "/debrecen.jpg",
+  "semmelweis":             "/Semmelweis%20University.png",
+  "szechenyi-istvan":       "/Sz%C3%A9chenyi%20Istv%C3%A1n%20University.jpg",
+  "university-of-miskolc":  "/University%20of%20Miskolc.png",
+  "university-of-szeged":   "/University%20of%20Szeged.jpg",
+  "bme":                    "/Budapest%20University%20of%20Technology%20and%20Economics.jpg",
 };
 
 type Props = { school: SchoolDto | SchoolSummaryDto };
