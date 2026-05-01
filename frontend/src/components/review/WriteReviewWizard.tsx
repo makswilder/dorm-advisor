@@ -31,6 +31,10 @@ interface Props {
 export function WriteReviewWizard({ onClose }: Props) {
   const { isLoggedIn } = useAuth();
   const [step, setStep] = useState<Step>("auth");
+
+  useEffect(() => {
+    if (isLoggedIn) setStep((s) => (s === "auth" ? "school" : s));
+  }, [isLoggedIn]);
   const [showSignIn, setShowSignIn] = useState(false);
   const [pendingAddSchool, setPendingAddSchool] = useState(false);
 

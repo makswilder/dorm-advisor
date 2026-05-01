@@ -40,7 +40,7 @@ public class QAService {
         final var question = DormQuestion.builder()
             .dorm(dorm)
             .questionText(dto.questionText())
-            .status(ContentStatus.PENDING)
+            .status(ContentStatus.VISIBLE)
             .build();
         return DormQuestionDto.fromEntity(dormQuestionRepository.save(question));
     }
@@ -69,7 +69,7 @@ public class QAService {
             .userId(userId)
             .authorType(authorType)
             .answerText(dto.answerText())
-            .status(ContentStatus.PENDING)
+            .status(ContentStatus.VISIBLE)
             .build();
         return DormAnswerDto.fromEntity(dormAnswerRepository.save(answer));
     }

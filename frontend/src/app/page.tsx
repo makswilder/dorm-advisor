@@ -3,6 +3,7 @@ import { SchoolCard } from "@/components/school/SchoolCard";
 import { DormCard } from "@/components/dorm/DormCard";
 import { Carousel } from "@/components/ui/Carousel";
 import { HeroSearch } from "@/components/home/HeroSearch";
+import { WriteReviewCTA } from "@/components/home/WriteReviewCTA";
 import Link from "next/link";
 import Image from "next/image";
 import { CheckCircle, GraduationCap, MessageSquare, ArrowRight } from "lucide-react";
@@ -132,13 +133,7 @@ export default async function HomePage() {
               Share your experience at your college dorm by writing a review. Your reviews are
               completely anonymous.
             </p>
-            <Link
-              href="/auth/login"
-              className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-            >
-              Write a Review
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+            <WriteReviewCTA />
           </div>
         </div>
       </section>
