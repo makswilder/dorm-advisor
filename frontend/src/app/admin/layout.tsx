@@ -17,11 +17,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const { user, isLoading } = useAuth();
   const router = useRouter();
 
+  const isAdmin = user?.email === "maksim@pte.hu";
+
   useEffect(() => {
-    if (!isLoading && !user) {
-      router.replace("/auth/login");
+    if (!isLoading && (!user || !isAdmin)) {
+      router.replace("/");
     }
-  }, [user, isLoading, router]);
+  }, [user, isLoading, isAdmin, router]);
 
   if (isLoading) {
     return (
@@ -29,7 +31,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <Spinner className="w-8 h-8 text-blue-500" />
       </div>
     );
-  } if (!user) return null;
+  }
+  if (!user || !isAdmin) return null;
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
       <div className="flex items-center gap-3 mb-8">

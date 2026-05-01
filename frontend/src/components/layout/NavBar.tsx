@@ -10,6 +10,7 @@ import { WriteReviewWizard } from "@/components/review/WriteReviewWizard";
 
 export function NavBar() {
   const { user, logout } = useAuth();
+  const isAdmin = user?.email === "maksim@pte.hu";
   const router = useRouter();
   const [showSignIn, setShowSignIn] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
@@ -42,12 +43,14 @@ export function NavBar() {
             {user ? (
               <div className="flex items-center gap-4">
                 <span className="text-gray-400 text-xs truncate max-w-[140px]">{user.email}</span>
-                <Link
-                  href="/admin"
-                  className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
-                >
-                  Admin
-                </Link>
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                  >
+                    Admin
+                  </Link>
+                )}
                 <button
                   onClick={handleLogout}
                   className="flex items-center gap-1 text-gray-500 hover:text-gray-800 transition-colors"
@@ -96,13 +99,15 @@ export function NavBar() {
             </Link>
             {user ? (
               <>
-                <Link
-                  href="/admin"
-                  className="py-3 text-blue-600 font-medium text-sm border-b border-gray-50"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  Admin
-                </Link>
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    className="py-3 text-blue-600 font-medium text-sm border-b border-gray-50"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Admin
+                  </Link>
+                )}
                 <button
                   onClick={() => { handleLogout(); setMobileOpen(false); }}
                   className="py-3 text-left text-gray-600 text-sm"

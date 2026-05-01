@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -17,6 +18,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    private static final String ADMIN_EMAIL = "maksim@pte.hu";
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
@@ -79,6 +82,11 @@ public class SecurityConfig {
                 // Public read — gallery and image serving
                 .requestMatchers(HttpMethod.GET, "/api/dorms/*/photos").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/photos/**").permitAll()
+                .requestMatchers("/api/admin/**").access(
+                    (supplier, ctx) -> new AuthorizationDecision(
+                        supplier.get().isAuthenticated() && ADMIN_EMAIL.equals(supplier.get().getName())
+                    )
+                )
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
