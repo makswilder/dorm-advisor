@@ -4,6 +4,7 @@ import com.dormAdvisor.api.config.CorsConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,8 +23,28 @@ public class SecurityConfig {
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final CorsConfig corsConfig;
 
+    // Chain 1: handles only the Google OAuth2 flow paths (needs a session for state storage)
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    @Order(1)
+    public SecurityFilterChain oauth2FilterChain(HttpSecurity http) throws Exception {
+        return http
+            .securityMatcher("/api/auth/oauth2/**", "/api/auth/google/callback")
+            .cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()))
+            .csrf(AbstractHttpConfigurer::disable)
+            .oauth2Login(oauth2 -> oauth2
+                .authorizationEndpoint(auth -> auth.baseUri("/api/auth/oauth2"))
+                .redirectionEndpoint(redirect -> redirect.baseUri("/api/auth/google/callback"))
+                .successHandler(oAuth2AuthenticationSuccessHandler)
+                .failureHandler(oAuth2AuthenticationFailureHandler)
+            )
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .build();
+    }
+
+    // Chain 2: stateless JWT chain for all remaining API paths
+    @Bean
+    @Order(2)
+    public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
         return http
             .cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()))
             .csrf(AbstractHttpConfigurer::disable)
@@ -58,16 +79,7 @@ public class SecurityConfig {
                 // Public read — gallery and image serving
                 .requestMatchers(HttpMethod.GET, "/api/dorms/*/photos").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/photos/**").permitAll()
-                // /api/auth/google and /api/auth/google/callback are handled by the OAuth2 DSL
                 .anyRequest().authenticated()
-            )
-            .oauth2Login(oauth2 -> oauth2
-                // GET /api/auth/oauth2/google triggers Google redirect
-                .authorizationEndpoint(auth -> auth.baseUri("/api/auth/oauth2"))
-                // Google redirects back to /api/auth/google/callback
-                .redirectionEndpoint(redirect -> redirect.baseUri("/api/auth/google/callback"))
-                .successHandler(oAuth2AuthenticationSuccessHandler)
-                .failureHandler(oAuth2AuthenticationFailureHandler)
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .build();

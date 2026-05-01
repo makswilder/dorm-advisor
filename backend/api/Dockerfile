@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY mvnw .
 COPY .mvn/ .mvn/
-RUN chmod +x mvnw
+RUN sed -i 's/\r$//' mvnw && chmod +x mvnw
 
 # Cache dependency layer separately from source
 COPY pom.xml .
