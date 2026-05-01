@@ -153,71 +153,47 @@ export function ReviewForm({ dormId, onSuccess, onClose, embedded = false }: Pro
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="block text-xs text-gray-500 mb-1">Class year (optional)</label>
-          <input
-            type="number"
-            {...register("classYear", { valueAsNumber: true })}
-            placeholder="2025"
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <div>
-          <label className="block text-xs text-gray-500 mb-1">Year lived (optional)</label>
-          <input
-            type="number"
-            {...register("yearLived", { valueAsNumber: true })}
-            placeholder="2023"
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Photo <span className="text-gray-400 font-normal">(optional)</span>
-        </label>
-        {photoPreview ? (
-          <div className="relative inline-block">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={photoPreview} alt="Preview" className="h-32 w-auto rounded-lg object-cover border border-gray-200" />
-            <button
-              type="button"
-              onClick={removePhoto}
-              className="absolute -top-2 -right-2 bg-white rounded-full shadow p-0.5 text-gray-500 hover:text-red-500"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-        ) : (
+      {photoPreview && (
+        <div className="relative inline-block">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={photoPreview} alt="Preview" className="h-32 w-auto rounded-lg object-cover border border-gray-200" />
           <button
             type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="flex items-center gap-2 px-4 py-2 border border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-blue-400 hover:text-blue-500 transition-colors"
+            onClick={removePhoto}
+            className="absolute -top-2 -right-2 bg-white rounded-full shadow p-0.5 text-gray-500 hover:text-red-500"
           >
-            <ImagePlus className="w-4 h-4" />
-            Add a photo
+            <X className="w-4 h-4" />
           </button>
-        )}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          className="hidden"
-          onChange={handlePhotoChange}
-        />
-      </div>
+        </div>
+      )}
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        className="hidden"
+        onChange={handlePhotoChange}
+      />
 
       {error && <p className="text-red-500 text-sm">{error}</p>}
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full py-3 rounded-xl font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors disabled:opacity-60"
-      >
-        {loading ? "Submitting…" : "Submit Review"}
-      </button>
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className="flex items-center gap-2 px-5 py-3 border border-dashed border-gray-300 rounded-xl text-sm font-medium text-gray-500 hover:border-blue-400 hover:text-blue-500 transition-colors"
+        >
+          <ImagePlus className="w-5 h-5" />
+          Add a photo
+        </button>
+        <button
+          type="submit"
+          disabled={loading}
+          className="flex-1 py-3 rounded-xl font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors disabled:opacity-60"
+        >
+          {loading ? "Submitting…" : "Submit Review"}
+        </button>
+      </div>
       <p className="text-xs text-gray-400 text-center">
         Reviews are reviewed by our team before going live.
       </p>
