@@ -53,7 +53,7 @@ public class PhotoStorageService {
     private double quality;
 
     @Transactional
-    public Photo store(UUID dormId, MultipartFile file, String caption, UUID userId) throws IOException {
+    public Photo store(UUID dormId, MultipartFile file, String caption, UUID userId, UUID reviewId) throws IOException {
         if (!dormRepository.existsById(dormId)) {
             throw new EntityNotFoundException("Dorm not found: " + dormId);
         }
@@ -87,11 +87,11 @@ public class PhotoStorageService {
             dormId, storageKey, width, height, bytes.length, Files.size(target));
 
         Photo photo = Photo.builder()
-            .dormId(dormId).userId(userId)
+            .dormId(dormId).userId(userId).reviewId(reviewId)
             .authorType(userId != null ? AuthorType.USER : AuthorType.GUEST)
             .storageKey(storageKey)
             .width(width).height(height)
-            .caption(caption).status(ContentStatus.PENDING).build();
+            .caption(caption).status(ContentStatus.VISIBLE).build();
         return photoRepository.save(photo);
     }
 

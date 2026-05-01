@@ -9,6 +9,7 @@ import java.util.UUID;
 public record PhotoDto(
     UUID id,
     UUID dormId,
+    UUID reviewId,
     String url,
     String thumbUrl,
     Integer width,
@@ -21,6 +22,7 @@ public record PhotoDto(
         return new PhotoDto(
             photo.getId(),
             photo.getDormId(),
+            photo.getReviewId(),
             "/api/photos/" + photo.getId(),
             "/api/photos/" + photo.getId() + "/thumb",
             photo.getWidth(),

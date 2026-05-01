@@ -1,10 +1,12 @@
 package com.dormAdvisor.api.domain.dto;
 
+import com.dormAdvisor.api.domain.entity.Photo;
 import com.dormAdvisor.api.domain.entity.Review;
 import com.dormAdvisor.api.domain.entity.enums.AuthorType;
 import com.dormAdvisor.api.domain.entity.enums.ContentStatus;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public record ReviewDto(
@@ -26,9 +28,10 @@ public record ReviewDto(
     boolean isVerifiedAtPost,
     ContentStatus status,
     LocalDateTime createdAt,
-    LocalDateTime updatedAt
+    LocalDateTime updatedAt,
+    List<PhotoDto> photos
 ) {
-    public static ReviewDto fromEntity(Review review) {
+    public static ReviewDto fromEntity(Review review, List<Photo> photos) {
         return new ReviewDto(
             review.getId(),
             review.getDorm().getId(),
@@ -48,7 +51,12 @@ public record ReviewDto(
             review.isVerifiedAtPost(),
             review.getStatus(),
             review.getCreatedAt(),
-            review.getUpdatedAt()
+            review.getUpdatedAt(),
+            photos.stream().map(PhotoDto::fromEntity).toList()
         );
+    }
+
+    public static ReviewDto fromEntity(Review review) {
+        return fromEntity(review, List.of());
     }
 }

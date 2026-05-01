@@ -6,6 +6,7 @@ import com.dormAdvisor.api.domain.dto.ReviewUpdateDto;
 import com.dormAdvisor.api.domain.entity.Review;
 import com.dormAdvisor.api.domain.entity.enums.AuthorType;
 import com.dormAdvisor.api.repository.DormRepository;
+import com.dormAdvisor.api.repository.PhotoRepository;
 import com.dormAdvisor.api.repository.ReviewRepository;
 import com.dormAdvisor.api.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,6 +26,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final DormRepository dormRepository;
     private final UserRepository userRepository;
+    private final PhotoRepository photoRepository;
 
     @Transactional
     public ReviewDto create(UUID dormId, ReviewCreateDto dto, String userEmail) {
@@ -54,20 +56,21 @@ public class ReviewService {
             });
         }
 
-        return ReviewDto.fromEntity(reviewRepository.save(builder.build()));
+        return ReviewDto.fromEntity(reviewRepository.save(builder.build()), List.of());
     }
 
     @Transactional(readOnly = true)
     public ReviewDto getById(UUID id) {
         log.info("Fetching review: {}", id);
-        return ReviewDto.fromEntity(findByIdOrThrow(id));
+        final var review = findByIdOrThrow(id);
+        return ReviewDto.fromEntity(review, photoRepository.findByReviewId(review.getId()));
     }
 
     @Transactional(readOnly = true)
     public List<ReviewDto> getByDorm(UUID dormId) {
         log.info("Fetching reviews for dorm: {}", dormId);
         return reviewRepository.findByDormId(dormId).stream()
-            .map(ReviewDto::fromEntity)
+            .map(r -> ReviewDto.fromEntity(r, photoRepository.findByReviewId(r.getId())))
             .toList();
     }
 

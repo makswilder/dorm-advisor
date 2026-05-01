@@ -40,6 +40,9 @@ public class Photo {
     @Column(name = "user_id")
     private UUID userId;
 
+    @Column(name = "review_id")
+    private UUID reviewId;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "author_type", nullable = false, columnDefinition = "author_type_enum")
     @Builder.Default

@@ -116,11 +116,13 @@ export const getPhotosForDorm = (dormId: string): Promise<{ data: PhotoDto[] }> 
 export const uploadPhoto = (
   dormId: string,
   file: File,
-  caption?: string
+  caption?: string,
+  reviewId?: string
 ): Promise<{ data: PhotoDto }> => {
   const form = new FormData();
   form.append("file", file);
   if (caption) form.append("caption", caption);
+  if (reviewId) form.append("reviewId", reviewId);
   return client.post(`/api/dorms/${dormId}/photos`, form, {
     headers: { "Content-Type": "multipart/form-data" },
   });

@@ -42,11 +42,12 @@ public class PhotoController {
         @PathVariable UUID dormId,
         @RequestParam("file") MultipartFile file,
         @RequestParam(value = "caption", required = false) String caption,
+        @RequestParam(value = "reviewId", required = false) UUID reviewId,
         Authentication authentication
     ) throws IOException {
         log.info("POST /api/dorms/{}/photos — filename: {}, size: {} bytes", dormId, file.getOriginalFilename(), file.getSize());
         UUID userId = resolveUserId(authentication);
-        Photo photo = photoStorageService.store(dormId, file, caption, userId);
+        Photo photo = photoStorageService.store(dormId, file, caption, userId, reviewId);
         PhotoDto dto = PhotoDto.fromEntity(photo);
         return ResponseEntity.created(URI.create("/api/photos/" + photo.getId())).body(dto);
     }

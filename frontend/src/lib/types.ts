@@ -91,6 +91,7 @@ export interface ReviewDto {
   status: ContentStatus;
   createdAt: string;
   updatedAt: string;
+  photos: PhotoDto[];
 }
 
 export interface ReviewCreateDto {
@@ -110,6 +111,7 @@ export interface ReviewCreateDto {
 export interface PhotoDto {
   id: string;
   dormId: string;
+  reviewId: string | null;
   url: string;
   thumbUrl: string;
   width: number | null;

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Star, X } from "lucide-react";
-import { createReview } from "@/lib/api";
+import { ImagePlus, Star, X } from "lucide-react";
+import { createReview, uploadPhoto } from "@/lib/api";
 import type { ReviewCreateDto } from "@/lib/types";
 
 const schema = z.object({
@@ -71,6 +71,9 @@ function StarRatingInput({ value, onChange }: { value: number; onChange: (v: num
 export function ReviewForm({ dormId, onSuccess, onClose, embedded = false }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
@@ -89,11 +92,27 @@ export function ReviewForm({ dormId, onSuccess, onClose, embedded = false }: Pro
 
   const values = watch();
 
+  function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPhotoFile(file);
+    setPhotoPreview(URL.createObjectURL(file));
+  }
+
+  function removePhoto() {
+    setPhotoFile(null);
+    setPhotoPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
   async function onSubmit(data: FormData) {
     setError("");
     setLoading(true);
     try {
-      await createReview(dormId, data as ReviewCreateDto);
+      const { data: review } = await createReview(dormId, data as ReviewCreateDto);
+      if (photoFile) {
+        await uploadPhoto(dormId, photoFile, undefined, review.id);
+      }
       onSuccess();
     } catch {
       setError("Failed to submit review. Please try again.");
@@ -151,6 +170,41 @@ export function ReviewForm({ dormId, onSuccess, onClose, embedded = false }: Pro
             className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Photo <span className="text-gray-400 font-normal">(optional)</span>
+        </label>
+        {photoPreview ? (
+          <div className="relative inline-block">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={photoPreview} alt="Preview" className="h-32 w-auto rounded-lg object-cover border border-gray-200" />
+            <button
+              type="button"
+              onClick={removePhoto}
+              className="absolute -top-2 -right-2 bg-white rounded-full shadow p-0.5 text-gray-500 hover:text-red-500"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center gap-2 px-4 py-2 border border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-blue-400 hover:text-blue-500 transition-colors"
+          >
+            <ImagePlus className="w-4 h-4" />
+            Add a photo
+          </button>
+        )}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          className="hidden"
+          onChange={handlePhotoChange}
+        />
       </div>
 
       {error && <p className="text-red-500 text-sm">{error}</p>}

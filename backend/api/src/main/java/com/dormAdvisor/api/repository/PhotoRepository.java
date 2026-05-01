@@ -12,4 +12,6 @@ public interface PhotoRepository extends JpaRepository<Photo, UUID> {
     List<Photo> findByDormIdAndStatusOrderByCreatedAtDesc(UUID dormId, ContentStatus status);
 
     List<Photo> findByDormIdOrderByCreatedAtDesc(UUID dormId);
+
+    List<Photo> findByReviewId(UUID reviewId);
 }

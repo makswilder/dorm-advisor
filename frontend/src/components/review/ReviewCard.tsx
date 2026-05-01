@@ -31,6 +31,21 @@ export function ReviewCard({ review }: Props) {
         <p className="text-gray-700 text-sm leading-relaxed mb-4">{review.reviewText}</p>
       )}
 
+      {review.photos && review.photos.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-4">
+          {review.photos.map((photo) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              key={photo.id}
+              src={photo.thumbUrl}
+              alt={photo.caption ?? "Review photo"}
+              className="h-28 w-auto rounded-lg object-cover border border-gray-100 cursor-pointer hover:opacity-90 transition-opacity"
+              onClick={() => window.open(photo.url, "_blank")}
+            />
+          ))}
+        </div>
+      )}
+
       <div className="space-y-1.5 mt-3">
         <SubRatingBar label="Cleanliness" value={review.cleanliness} />
         <SubRatingBar label="Location" value={review.locationRating} />
