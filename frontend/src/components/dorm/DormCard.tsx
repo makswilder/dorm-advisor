@@ -5,10 +5,11 @@ import { colorFromName } from "@/lib/colorFromName";
 import type { DormDto, DormSummaryDto } from "@/lib/types";
 
 const DORM_PHOTOS: Record<string, string> = {
-  "balassa":             "/Balassa.png",
-  "ajtosi-durer-sori":   "/Ajtosi%20Durer%20sori.png",
-  "foldes-kollegium":    "/F%C3%B6ldes-Koll%C3%A9gium.jpg",
-  "tarkareti-kollegium": "/Tarkar%C3%A9ti%20Koll%C3%A9gium.jpg",
+  "balassa":          "/Balassa.png",
+  "ajtosi-durer":     "/Ajtosi%20Durer%20sori.png",
+  "raday":            "/F%C3%B6ldes-Koll%C3%A9gium.jpg",
+  "tarkareti":        "/Tarkar%C3%A9ti%20Koll%C3%A9gium.jpg",
+  "simonyi-college":  "/Simonyi%20College.jpg",
 };
 
 type Props = {
