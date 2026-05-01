@@ -21,7 +21,3 @@ frontend/.env.local
 
 # Docker
 docker-compose.override.yml
-
-# Claude Code
-CLAUDE.md
-.claude/
