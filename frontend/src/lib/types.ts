@@ -95,6 +95,7 @@ export interface ReviewDto {
   authorEmail: string | null;
   authorName: string | null;
   authorEmoji: string | null;
+  isAdmin: boolean;
 }
 
 export interface ReviewCreateDto {
@@ -159,6 +160,7 @@ export interface DormAnswerDto {
   status: ContentStatus;
   createdAt: string;
   authorEmail: string | null;
+  isAdmin: boolean;
 }
 
 export interface ForumThreadDto {

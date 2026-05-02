@@ -1,7 +1,7 @@
 import { formatDistanceToNow } from "date-fns";
 import { RatingStars } from "@/components/ui/RatingStars";
 import { SubRatingBar } from "@/components/ui/SubRatingBar";
-import { VerifiedBadge } from "@/components/ui/Badge";
+import { AdminBadge, VerifiedBadge } from "@/components/ui/Badge";
 import type { ReviewDto } from "@/lib/types";
 
 interface Props {
@@ -25,6 +25,7 @@ export function ReviewCard({ review }: Props) {
               <span className="font-semibold text-gray-800 text-sm">
                 {review.authorName ?? (review.authorType === "GUEST" ? "Guest" : "Member")}
               </span>
+              <AdminBadge isAdmin={review.isAdmin} />
               <VerifiedBadge verified={review.isVerifiedAtPost} />
             </div>
             <div className="flex items-center gap-2 mt-0.5">

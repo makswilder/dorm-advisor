@@ -79,7 +79,12 @@ public class QAService {
         log.info("Listing answers for question: {}", questionId);
         return dormAnswerRepository
             .findByQuestionIdAndStatusOrderByCreatedAtDesc(questionId, ContentStatus.VISIBLE)
-            .stream().map(DormAnswerDto::fromEntity).toList();
+            .stream().map(a -> {
+                String email = a.getUserId() != null
+                    ? userRepository.findById(a.getUserId()).map(u -> u.getEmail()).orElse(null)
+                    : null;
+                return DormAnswerDto.fromEntity(a, email);
+            }).toList();
     }
 
     @Transactional(readOnly = true)

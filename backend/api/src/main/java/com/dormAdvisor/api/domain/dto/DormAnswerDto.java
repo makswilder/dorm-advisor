@@ -15,8 +15,11 @@ public record DormAnswerDto(
     String answerText,
     ContentStatus status,
     LocalDateTime createdAt,
-    String authorEmail
+    String authorEmail,
+    boolean isAdmin
 ) {
+    private static final String ADMIN_EMAIL = "maksim@pte.hu";
+
     public static DormAnswerDto fromEntity(DormAnswer a) {
         return fromEntity(a, null);
     }
@@ -30,7 +33,8 @@ public record DormAnswerDto(
             a.getAnswerText(),
             a.getStatus(),
             a.getCreatedAt(),
-            authorEmail
+            authorEmail,
+            ADMIN_EMAIL.equals(authorEmail)
         );
     }
 }

@@ -32,8 +32,11 @@ public record ReviewDto(
     List<PhotoDto> photos,
     String authorEmail,
     String authorName,
-    String authorEmoji
+    String authorEmoji,
+    boolean isAdmin
 ) {
+    private static final String ADMIN_EMAIL = "maksim@pte.hu";
+
     public static ReviewDto fromEntity(Review review, List<Photo> photos) {
         return fromEntity(review, photos, null);
     }
@@ -41,6 +44,8 @@ public record ReviewDto(
     public static ReviewDto fromEntity(Review review, List<Photo> photos, String authorEmail) {
         String authorName = review.getUser() != null ? review.getUser().getDisplayName() : null;
         String authorEmoji = review.getUser() != null ? review.getUser().getAvatarEmoji() : null;
+        boolean isAdmin = review.getUser() != null
+            && ADMIN_EMAIL.equals(review.getUser().getEmailNormalized());
         return new ReviewDto(
             review.getId(),
             review.getDorm().getId(),
@@ -64,7 +69,8 @@ public record ReviewDto(
             photos.stream().map(PhotoDto::fromEntity).toList(),
             authorEmail,
             authorName,
-            authorEmoji
+            authorEmoji,
+            isAdmin
         );
     }
 

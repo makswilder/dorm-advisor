@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { MessageCircleQuestion, ChevronDown, ChevronUp } from "lucide-react";
 import { getQuestionsForDorm, getAnswersForQuestion, createQuestion, createAnswer } from "@/lib/api";
+import { AdminBadge } from "@/components/ui/Badge";
 import type { DormQuestionDto } from "@/lib/types";
 
 interface Props {
@@ -47,8 +48,16 @@ function AnswerThread({ question }: { question: DormQuestionDto }) {
       {open && (
         <div className="px-4 pb-4 space-y-3">
           {answers?.map((a) => (
-            <div key={a.id} className="text-sm text-gray-600 pl-3 border-l-2 border-blue-200">
-              {a.answerText}
+            <div
+              key={a.id}
+              className={`pl-3 border-l-2 ${a.isAdmin ? "border-red-400 bg-red-50 rounded-r-lg pr-3 py-1.5" : "border-blue-200"}`}
+            >
+              {a.isAdmin && (
+                <div className="mb-1">
+                  <AdminBadge isAdmin={true} />
+                </div>
+              )}
+              <p className="text-sm text-gray-700">{a.answerText}</p>
             </div>
           ))}
           {(!answers || answers.length === 0) && (
