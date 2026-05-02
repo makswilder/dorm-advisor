@@ -93,6 +93,8 @@ export interface ReviewDto {
   updatedAt: string;
   photos: PhotoDto[];
   authorEmail: string | null;
+  authorName: string | null;
+  authorEmoji: string | null;
 }
 
 export interface ReviewCreateDto {

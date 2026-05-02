@@ -13,18 +13,29 @@ export function ReviewCard({ review }: Props) {
     <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
       <div className="flex items-start justify-between gap-4 mb-4">
         <div className="flex items-center gap-3">
-          <RatingStars value={review.overall} />
-          <span className="font-bold text-gray-800 text-lg">{review.overall.toFixed(1)}</span>
-        </div>
-        <div className="flex flex-col items-end gap-1">
-          <VerifiedBadge verified={review.isVerifiedAtPost} />
-          {review.authorType === "GUEST" && !review.isVerifiedAtPost && (
-            <span className="text-xs text-gray-400">Guest</span>
+          {review.authorEmoji ? (
+            <span className="text-2xl leading-none">{review.authorEmoji}</span>
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 text-sm font-semibold shrink-0">
+              {review.authorType === "GUEST" ? "G" : "U"}
+            </div>
           )}
-          <span className="text-xs text-gray-400">
-            {formatDistanceToNow(new Date(review.createdAt), { addSuffix: true })}
-          </span>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-gray-800 text-sm">
+                {review.authorName ?? (review.authorType === "GUEST" ? "Guest" : "Member")}
+              </span>
+              <VerifiedBadge verified={review.isVerifiedAtPost} />
+            </div>
+            <div className="flex items-center gap-2 mt-0.5">
+              <RatingStars value={review.overall} />
+              <span className="font-bold text-gray-800 text-base">{review.overall.toFixed(1)}</span>
+            </div>
+          </div>
         </div>
+        <span className="text-xs text-gray-400 shrink-0">
+          {formatDistanceToNow(new Date(review.createdAt), { addSuffix: true })}
+        </span>
       </div>
 
       {review.reviewText && (

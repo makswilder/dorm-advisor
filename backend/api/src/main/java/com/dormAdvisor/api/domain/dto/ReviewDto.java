@@ -30,13 +30,17 @@ public record ReviewDto(
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
     List<PhotoDto> photos,
-    String authorEmail
+    String authorEmail,
+    String authorName,
+    String authorEmoji
 ) {
     public static ReviewDto fromEntity(Review review, List<Photo> photos) {
         return fromEntity(review, photos, null);
     }
 
     public static ReviewDto fromEntity(Review review, List<Photo> photos, String authorEmail) {
+        String authorName = review.getUser() != null ? review.getUser().getDisplayName() : null;
+        String authorEmoji = review.getUser() != null ? review.getUser().getAvatarEmoji() : null;
         return new ReviewDto(
             review.getId(),
             review.getDorm().getId(),
@@ -58,7 +62,9 @@ public record ReviewDto(
             review.getCreatedAt(),
             review.getUpdatedAt(),
             photos.stream().map(PhotoDto::fromEntity).toList(),
-            authorEmail
+            authorEmail,
+            authorName,
+            authorEmoji
         );
     }
 
