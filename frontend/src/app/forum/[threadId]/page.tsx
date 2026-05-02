@@ -74,10 +74,23 @@ export default function ForumThreadPage() {
           </p>
         )}
         {posts?.map((post) => (
-          <div key={post.id} className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+          <div
+            key={post.id}
+            className={`rounded-xl border shadow-sm p-5 ${
+              post.isAdmin
+                ? "bg-blue-50 border-blue-200"
+                : "bg-white border-gray-100"
+            }`}
+          >
             <p className="text-gray-800 text-sm leading-relaxed whitespace-pre-wrap">{post.postText}</p>
-            <p className="text-xs text-gray-400 mt-3">
-              {post.authorType === "GUEST" ? "Guest" : "Member"} ·{" "}
+            <p className="text-xs text-gray-400 mt-3 flex items-center gap-1.5">
+              {post.isAdmin && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-600 text-white">
+                  Admin
+                </span>
+              )}
+              {!post.isAdmin && (post.authorType === "GUEST" ? "Guest" : "Member")}
+              {" · "}
               {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
             </p>
           </div>

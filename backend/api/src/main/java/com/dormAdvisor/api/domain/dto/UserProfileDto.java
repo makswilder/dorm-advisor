@@ -8,6 +8,8 @@ import java.util.UUID;
 public record UserProfileDto(
     UUID id,
     String email,
+    String displayName,
+    String avatarEmoji,
     boolean isVerifiedStudent,
     UUID verifiedSchoolId,
     LocalDateTime lastLoginAt,
@@ -18,6 +20,8 @@ public record UserProfileDto(
         return new UserProfileDto(
             user.getId(),
             user.getEmail(),
+            user.getDisplayName(),
+            user.getAvatarEmoji(),
             user.isVerifiedStudent(),
             user.getVerifiedSchool() != null ? user.getVerifiedSchool().getId() : null,
             user.getLastLoginAt(),

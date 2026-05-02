@@ -59,12 +59,22 @@ public class ForumService {
         return ForumThreadDto.fromEntity(findThreadOrThrow(threadId));
     }
 
+    private static final String ADMIN_EMAIL_NORMALIZED = "maksim@pte.hu";
+
     @Transactional(readOnly = true)
     public List<ForumPostDto> listPosts(UUID threadId) {
         log.info("Listing posts for thread: {}", threadId);
         return forumPostRepository
             .findByThreadIdAndStatusOrderByCreatedAtDesc(threadId, ContentStatus.VISIBLE)
-            .stream().map(ForumPostDto::fromEntity).toList();
+            .stream()
+            .map(p -> {
+                boolean admin = p.getUserId() != null &&
+                    userRepository.findById(p.getUserId())
+                        .map(u -> ADMIN_EMAIL_NORMALIZED.equals(u.getEmailNormalized()))
+                        .orElse(false);
+                return ForumPostDto.fromEntity(p, admin);
+            })
+            .toList();
     }
 
     @Transactional

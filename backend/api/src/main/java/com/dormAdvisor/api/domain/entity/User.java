@@ -51,6 +51,12 @@ public class User {
     @JoinColumn(name = "verified_school_id")
     private School verifiedSchool;
 
+    @Column(name = "display_name", length = 100)
+    private String displayName;
+
+    @Column(name = "avatar_emoji", length = 10)
+    private String avatarEmoji;
+
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
 

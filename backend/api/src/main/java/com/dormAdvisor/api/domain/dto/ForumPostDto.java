@@ -15,9 +15,14 @@ public record ForumPostDto(
     String postText,
     ContentStatus status,
     LocalDateTime createdAt,
-    LocalDateTime updatedAt
+    LocalDateTime updatedAt,
+    boolean isAdmin
 ) {
     public static ForumPostDto fromEntity(ForumPost p) {
+        return fromEntity(p, false);
+    }
+
+    public static ForumPostDto fromEntity(ForumPost p, boolean isAdmin) {
         return new ForumPostDto(
             p.getId(),
             p.getThread().getId(),
@@ -26,7 +31,8 @@ public record ForumPostDto(
             p.getPostText(),
             p.getStatus(),
             p.getCreatedAt(),
-            p.getUpdatedAt()
+            p.getUpdatedAt(),
+            isAdmin
         );
     }
 }

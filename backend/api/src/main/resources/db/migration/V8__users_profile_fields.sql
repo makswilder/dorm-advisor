@@ -1,0 +1,2 @@
+ALTER TABLE users ADD COLUMN display_name  VARCHAR(100);
+ALTER TABLE users ADD COLUMN avatar_emoji  VARCHAR(10);

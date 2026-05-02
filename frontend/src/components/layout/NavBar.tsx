@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { LogOut, Menu, X } from "lucide-react";
+import { LogOut, Menu, User, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { SignInModal } from "@/components/auth/SignInModal";
 import { WriteReviewWizard } from "@/components/review/WriteReviewWizard";
@@ -42,7 +42,20 @@ export function NavBar() {
 
             {user ? (
               <div className="flex items-center gap-4">
-                <span className="text-gray-400 text-xs truncate max-w-[140px]">{user.email}</span>
+                <Link
+                  href="/profile"
+                  className="flex items-center gap-2 text-gray-500 hover:text-gray-800 transition-colors"
+                  title="My profile"
+                >
+                  {user.avatarEmoji ? (
+                    <span className="text-xl leading-none">{user.avatarEmoji}</span>
+                  ) : (
+                    <User className="w-4 h-4" />
+                  )}
+                  <span className="text-xs text-gray-400 truncate max-w-[120px]">
+                    {user.displayName ?? user.email}
+                  </span>
+                </Link>
                 {isAdmin && (
                   <Link
                     href="/admin"
@@ -99,6 +112,18 @@ export function NavBar() {
             </Link>
             {user ? (
               <>
+                <Link
+                  href="/profile"
+                  className="py-3 flex items-center gap-2 text-gray-700 font-medium text-sm border-b border-gray-50"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {user.avatarEmoji ? (
+                    <span className="text-xl leading-none">{user.avatarEmoji}</span>
+                  ) : (
+                    <User className="w-4 h-4" />
+                  )}
+                  {user.displayName ?? user.email}
+                </Link>
                 {isAdmin && (
                   <Link
                     href="/admin"

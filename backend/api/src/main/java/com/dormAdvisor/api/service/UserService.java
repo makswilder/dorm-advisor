@@ -57,6 +57,8 @@ public class UserService {
             user.setVerifiedSchool(school);
             user.setVerifiedStudent(true);
         }
+        if (dto.displayName() != null) user.setDisplayName(dto.displayName().isBlank() ? null : dto.displayName().trim());
+        if (dto.avatarEmoji() != null) user.setAvatarEmoji(dto.avatarEmoji().isBlank() ? null : dto.avatarEmoji());
         return UserProfileDto.fromEntity(userRepository.save(user));
     }
 

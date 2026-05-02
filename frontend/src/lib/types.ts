@@ -125,6 +125,8 @@ export interface PhotoDto {
 export interface UserDto {
   id: string;
   email: string;
+  displayName: string | null;
+  avatarEmoji: string | null;
   isVerifiedStudent: boolean;
   verifiedSchoolId: string | null;
   lastLoginAt: string | null;
@@ -175,6 +177,7 @@ export interface ForumPostDto {
   status: ContentStatus;
   createdAt: string;
   updatedAt: string;
+  isAdmin: boolean;
 }
 
 export interface DormQuestionCreateDto {

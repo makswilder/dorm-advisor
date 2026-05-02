@@ -40,6 +40,12 @@ export const logoutApi = () =>
 export const getMe = (): Promise<{ data: UserDto }> =>
   client.get("/api/users/me");
 
+export const updateProfile = (data: {
+  displayName?: string;
+  avatarEmoji?: string;
+}): Promise<{ data: UserDto }> =>
+  client.put("/api/users/me", data);
+
 // Schools
 export const getHomepage = (): Promise<{ data: HomeDto }> =>
   client.get("/api/public/homepage");
