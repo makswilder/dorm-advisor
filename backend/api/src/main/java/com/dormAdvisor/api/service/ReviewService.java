@@ -69,7 +69,7 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public List<ReviewDto> getByDorm(UUID dormId) {
         log.info("Fetching reviews for dorm: {}", dormId);
-        return reviewRepository.findByDormId(dormId).stream()
+        return reviewRepository.findByDormIdOrderByCreatedAtDesc(dormId).stream()
             .map(r -> ReviewDto.fromEntity(r, photoRepository.findByReviewId(r.getId())))
             .toList();
     }

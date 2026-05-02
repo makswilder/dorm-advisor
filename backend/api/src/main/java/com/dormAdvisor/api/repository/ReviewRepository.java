@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public interface ReviewRepository extends JpaRepository<Review, UUID> {
 
-    List<Review> findByDormId(UUID dormId);
+    List<Review> findByDormIdOrderByCreatedAtDesc(UUID dormId);
 
     List<Review> findByDormIdAndStatus(UUID dormId, ContentStatus status);
 
