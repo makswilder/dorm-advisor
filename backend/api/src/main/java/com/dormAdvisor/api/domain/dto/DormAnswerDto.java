@@ -16,15 +16,21 @@ public record DormAnswerDto(
     ContentStatus status,
     LocalDateTime createdAt,
     String authorEmail,
-    boolean isAdmin
+    boolean isAdmin,
+    String authorName,
+    String authorEmoji
 ) {
     private static final String ADMIN_EMAIL = "maksim@pte.hu";
 
     public static DormAnswerDto fromEntity(DormAnswer a) {
-        return fromEntity(a, null);
+        return fromEntity(a, null, null, null);
     }
 
     public static DormAnswerDto fromEntity(DormAnswer a, String authorEmail) {
+        return fromEntity(a, authorEmail, null, null);
+    }
+
+    public static DormAnswerDto fromEntity(DormAnswer a, String authorEmail, String authorName, String authorEmoji) {
         return new DormAnswerDto(
             a.getId(),
             a.getQuestion().getId(),
@@ -34,7 +40,9 @@ public record DormAnswerDto(
             a.getStatus(),
             a.getCreatedAt(),
             authorEmail,
-            ADMIN_EMAIL.equals(authorEmail)
+            ADMIN_EMAIL.equals(authorEmail),
+            authorName,
+            authorEmoji
         );
     }
 }

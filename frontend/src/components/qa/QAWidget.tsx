@@ -50,13 +50,17 @@ function AnswerThread({ question }: { question: DormQuestionDto }) {
           {answers?.map((a) => (
             <div
               key={a.id}
-              className={`pl-3 border-l-2 ${a.isAdmin ? "border-red-400 bg-red-50 rounded-r-lg pr-3 py-1.5" : "border-blue-200"}`}
+              className={`pl-3 border-l-2 ${a.isAdmin ? "border-red-400 bg-red-50 rounded-r-lg pr-3 py-2" : "border-blue-200"}`}
             >
-              {a.isAdmin && (
-                <div className="mb-1">
-                  <AdminBadge isAdmin={true} />
-                </div>
-              )}
+              <div className="flex items-center gap-1.5 mb-1">
+                {a.authorEmoji && (
+                  <span className="text-base leading-none">{a.authorEmoji}</span>
+                )}
+                <span className="text-xs font-semibold text-gray-700">
+                  {a.authorName ?? (a.authorType === "GUEST" ? "Guest" : "Member")}
+                </span>
+                <AdminBadge isAdmin={a.isAdmin} />
+              </div>
               <p className="text-sm text-gray-700">{a.answerText}</p>
             </div>
           ))}

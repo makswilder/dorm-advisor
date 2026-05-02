@@ -80,10 +80,10 @@ public class QAService {
         return dormAnswerRepository
             .findByQuestionIdAndStatusOrderByCreatedAtDesc(questionId, ContentStatus.VISIBLE)
             .stream().map(a -> {
-                String email = a.getUserId() != null
-                    ? userRepository.findById(a.getUserId()).map(u -> u.getEmail()).orElse(null)
-                    : null;
-                return DormAnswerDto.fromEntity(a, email);
+                if (a.getUserId() == null) return DormAnswerDto.fromEntity(a);
+                return userRepository.findById(a.getUserId())
+                    .map(u -> DormAnswerDto.fromEntity(a, u.getEmail(), u.getDisplayName(), u.getAvatarEmoji()))
+                    .orElseGet(() -> DormAnswerDto.fromEntity(a));
             }).toList();
     }
 
@@ -109,10 +109,10 @@ public class QAService {
     public List<DormAnswerDto> getAllVisibleAnswers() {
         return dormAnswerRepository.findByStatus(ContentStatus.VISIBLE).stream()
             .map(a -> {
-                String email = a.getUserId() != null
-                    ? userRepository.findById(a.getUserId()).map(u -> u.getEmail()).orElse(null)
-                    : null;
-                return DormAnswerDto.fromEntity(a, email);
+                if (a.getUserId() == null) return DormAnswerDto.fromEntity(a);
+                return userRepository.findById(a.getUserId())
+                    .map(u -> DormAnswerDto.fromEntity(a, u.getEmail(), u.getDisplayName(), u.getAvatarEmoji()))
+                    .orElseGet(() -> DormAnswerDto.fromEntity(a));
             })
             .toList();
     }

@@ -161,6 +161,8 @@ export interface DormAnswerDto {
   createdAt: string;
   authorEmail: string | null;
   isAdmin: boolean;
+  authorName: string | null;
+  authorEmoji: string | null;
 }
 
 export interface ForumThreadDto {
