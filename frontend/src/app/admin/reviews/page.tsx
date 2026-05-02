@@ -2,37 +2,35 @@
 
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getPendingReviews, approveReview, rejectReview } from "@/lib/api";
+import { getAllReviews, removeReview } from "@/lib/api";
 import { RatingStars } from "@/components/ui/RatingStars";
 import { Spinner } from "@/components/ui/Spinner";
-import { CheckCircle, XCircle } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
 export default function AdminReviewsPage() {
   const qc = useQueryClient();
-  const [rejectId, setRejectId] = useState<string | null>(null);
-  const [rejectReason, setRejectReason] = useState("");
+  const [confirmId, setConfirmId] = useState<string | null>(null);
 
   const { data: reviews, isLoading } = useQuery({
-    queryKey: ["admin", "reviews"],
-    queryFn: () => getPendingReviews().then((r) => r.data),
+    queryKey: ["admin", "reviews", "all"],
+    queryFn: () => getAllReviews().then((r) => r.data),
   });
-  async function handleApprove(id: string) {
-    await approveReview(id, {});
-    qc.invalidateQueries({ queryKey: ["admin", "reviews"] });
+
+  async function handleRemove(id: string) {
+    await removeReview(id);
+    setConfirmId(null);
+    qc.invalidateQueries({ queryKey: ["admin", "reviews", "all"] });
   }
 
-  async function handleReject(id: string) {
-    await rejectReview(id, { reason: rejectReason || undefined });
-    setRejectId(null);
-    setRejectReason("");
-    qc.invalidateQueries({ queryKey: ["admin", "reviews"] });
-  }
   if (isLoading) return <div className="flex justify-center py-10"><Spinner className="w-6 h-6 text-blue-400" /></div>;
+
   return (
     <div>
-      <h2 className="text-xl font-bold text-gray-800 mb-4">Pending Reviews ({reviews?.length ?? 0})</h2>
-      {!reviews?.length && <p className="text-gray-400 text-sm">No pending reviews.</p>}
+      <h2 className="text-xl font-bold text-gray-800 mb-4">
+        Live Reviews <span className="text-gray-400 font-normal text-base">({reviews?.length ?? 0})</span>
+      </h2>
+      {!reviews?.length && <p className="text-gray-400 text-sm">No reviews yet.</p>}
       <div className="space-y-3">
         {reviews?.map((review) => (
           <div key={review.id} className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
@@ -50,43 +48,33 @@ export default function AdminReviewsPage() {
                   <p className="text-sm text-gray-600 line-clamp-2">{review.reviewText}</p>
                 )}
                 <p className="text-xs text-gray-400 mt-1">
+                  {review.authorEmail
+                    ? <span className="text-blue-500">{review.authorEmail}</span>
+                    : <span>Guest</span>}{" · "}
                   {formatDistanceToNow(new Date(review.createdAt), { addSuffix: true })}
                 </p>
               </div>
-              <div className="flex gap-2 shrink-0">
-                <button
-                  onClick={() => handleApprove(review.id)}
-                  className="flex items-center gap-1 px-3 py-1.5 bg-green-50 text-green-700 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors"
-                >
-                  <CheckCircle className="w-4 h-4" />
-                  Approve
-                </button>
-                <button
-                  onClick={() => setRejectId(review.id)}
-                  className="flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors"
-                >
-                  <XCircle className="w-4 h-4" />
-                  Reject
-                </button>
-              </div>
+              <button
+                onClick={() => setConfirmId(review.id)}
+                className="flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors shrink-0"
+              >
+                <Trash2 className="w-4 h-4" />
+                Remove
+              </button>
             </div>
-            {rejectId === review.id && (
-              <div className="mt-3 flex gap-2">
-                <input
-                  value={rejectReason}
-                  onChange={(e) => setRejectReason(e.target.value)}
-                  placeholder="Reason (optional)"
-                  className="flex-1 border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-300"
-                />
+
+            {confirmId === review.id && (
+              <div className="mt-3 flex items-center gap-2 bg-red-50 rounded-lg p-3">
+                <p className="text-sm text-red-700 flex-1">Remove this review? It will be hidden immediately.</p>
                 <button
-                  onClick={() => handleReject(review.id)}
+                  onClick={() => handleRemove(review.id)}
                   className="px-3 py-1.5 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700"
                 >
                   Confirm
                 </button>
                 <button
-                  onClick={() => setRejectId(null)}
-                  className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50"
+                  onClick={() => setConfirmId(null)}
+                  className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-white"
                 >
                   Cancel
                 </button>

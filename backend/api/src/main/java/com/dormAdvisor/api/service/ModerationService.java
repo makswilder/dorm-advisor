@@ -14,6 +14,7 @@ import com.dormAdvisor.api.repository.ReviewRepository;
 import com.dormAdvisor.api.repository.SchoolRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -53,6 +54,17 @@ public class ModerationService {
         log.info("Fetching pending reviews");
         return reviewRepository.findByStatus(ContentStatus.PENDING).stream()
             .map(ReviewDto::fromEntity)
+            .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReviewDto> getAllVisibleReviews() {
+        log.info("Fetching all visible reviews");
+        return reviewRepository.findByStatus(ContentStatus.VISIBLE).stream()
+            .map(r -> {
+                String email = r.getUser() != null ? r.getUser().getEmail() : null;
+                return ReviewDto.fromEntity(r, List.of(), email);
+            })
             .toList();
     }
 
@@ -96,6 +108,7 @@ public class ModerationService {
         return DormDto.fromEntity(dorm);
     }
 
+    @CacheEvict(value = "schoolRankings", allEntries = true)
     public ReviewDto approveReview(UUID id, UUID moderatorId, String reason) {
         log.info("Approving review: {}", id);
         final var review = reviewRepository.findById(id)
@@ -106,6 +119,7 @@ public class ModerationService {
         return ReviewDto.fromEntity(review);
     }
 
+    @CacheEvict(value = "schoolRankings", allEntries = true)
     public ReviewDto rejectReview(UUID id, UUID moderatorId, String reason) {
         log.info("Rejecting review: {}", id);
         final var review = reviewRepository.findById(id)

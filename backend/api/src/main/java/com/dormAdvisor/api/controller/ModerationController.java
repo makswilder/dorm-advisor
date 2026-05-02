@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,6 +47,21 @@ public class ModerationController {
     @GetMapping("/reviews/pending")
     public ResponseEntity<List<ReviewDto>> pendingReviews() {
         return ResponseEntity.ok(moderationService.getPendingReviews());
+    }
+
+    @GetMapping("/reviews/all")
+    public ResponseEntity<List<ReviewDto>> allReviews() {
+        return ResponseEntity.ok(moderationService.getAllVisibleReviews());
+    }
+
+    @DeleteMapping("/reviews/{id}")
+    public ResponseEntity<Void> removeReview(
+        @PathVariable UUID id,
+        Authentication authentication
+    ) {
+        log.info("DELETE /api/admin/reviews/{}", id);
+        moderationService.rejectReview(id, moderatorId(authentication), null);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/schools/{id}/approve")
@@ -113,6 +129,18 @@ public class ModerationController {
         return ResponseEntity.ok(qaService.getPending());
     }
 
+    @GetMapping("/questions/all")
+    public ResponseEntity<List<DormQuestionDto>> allQuestions() {
+        return ResponseEntity.ok(qaService.getAllVisibleQuestions());
+    }
+
+    @DeleteMapping("/questions/{id}")
+    public ResponseEntity<Void> removeQuestion(@PathVariable UUID id) {
+        log.info("DELETE /api/admin/questions/{}", id);
+        qaService.rejectQuestion(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/questions/{id}/approve")
     public ResponseEntity<DormQuestionDto> approveQuestion(@PathVariable UUID id) {
         log.info("POST /api/admin/questions/{}/approve", id);
@@ -128,6 +156,18 @@ public class ModerationController {
     @GetMapping("/answers/pending")
     public ResponseEntity<List<DormAnswerDto>> pendingAnswers() {
         return ResponseEntity.ok(qaService.getPendingAnswers());
+    }
+
+    @GetMapping("/answers/all")
+    public ResponseEntity<List<DormAnswerDto>> allAnswers() {
+        return ResponseEntity.ok(qaService.getAllVisibleAnswers());
+    }
+
+    @DeleteMapping("/answers/{id}")
+    public ResponseEntity<Void> removeAnswer(@PathVariable UUID id) {
+        log.info("DELETE /api/admin/answers/{}", id);
+        qaService.rejectAnswer(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/answers/{id}/approve")

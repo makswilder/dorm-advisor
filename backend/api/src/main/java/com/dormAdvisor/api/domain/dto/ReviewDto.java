@@ -29,9 +29,14 @@ public record ReviewDto(
     ContentStatus status,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
-    List<PhotoDto> photos
+    List<PhotoDto> photos,
+    String authorEmail
 ) {
     public static ReviewDto fromEntity(Review review, List<Photo> photos) {
+        return fromEntity(review, photos, null);
+    }
+
+    public static ReviewDto fromEntity(Review review, List<Photo> photos, String authorEmail) {
         return new ReviewDto(
             review.getId(),
             review.getDorm().getId(),
@@ -52,7 +57,8 @@ public record ReviewDto(
             review.getStatus(),
             review.getCreatedAt(),
             review.getUpdatedAt(),
-            photos.stream().map(PhotoDto::fromEntity).toList()
+            photos.stream().map(PhotoDto::fromEntity).toList(),
+            authorEmail
         );
     }
 

@@ -94,6 +94,24 @@ public class QAService {
             .stream().map(DormAnswerDto::fromEntity).toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<DormQuestionDto> getAllVisibleQuestions() {
+        return dormQuestionRepository.findByStatus(ContentStatus.VISIBLE)
+            .stream().map(DormQuestionDto::fromEntity).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<DormAnswerDto> getAllVisibleAnswers() {
+        return dormAnswerRepository.findByStatus(ContentStatus.VISIBLE).stream()
+            .map(a -> {
+                String email = a.getUserId() != null
+                    ? userRepository.findById(a.getUserId()).map(u -> u.getEmail()).orElse(null)
+                    : null;
+                return DormAnswerDto.fromEntity(a, email);
+            })
+            .toList();
+    }
+
     @Transactional
     public DormQuestionDto approveQuestion(UUID id) {
         final var q = findQuestionOrThrow(id);

@@ -194,14 +194,23 @@ export const rejectDorm = (id: string, data: ModerationActionDto) =>
 export const getPendingReviews = (): Promise<{ data: ReviewDto[] }> =>
   client.get("/api/admin/reviews/pending");
 
+export const getAllReviews = (): Promise<{ data: ReviewDto[] }> =>
+  client.get("/api/admin/reviews/all");
+
 export const approveReview = (id: string, data: ModerationActionDto) =>
   client.post(`/api/admin/reviews/${id}/approve`, data);
 
 export const rejectReview = (id: string, data: ModerationActionDto) =>
   client.post(`/api/admin/reviews/${id}/reject`, data);
 
+export const removeReview = (id: string) =>
+  client.delete(`/api/admin/reviews/${id}`);
+
 export const getPendingQuestions = (): Promise<{ data: DormQuestionDto[] }> =>
   client.get("/api/admin/questions/pending");
+
+export const getAllQuestions = (): Promise<{ data: DormQuestionDto[] }> =>
+  client.get("/api/admin/questions/all");
 
 export const approveQuestion = (id: string) =>
   client.post(`/api/admin/questions/${id}/approve`);
@@ -209,11 +218,20 @@ export const approveQuestion = (id: string) =>
 export const rejectQuestion = (id: string) =>
   client.post(`/api/admin/questions/${id}/reject`);
 
+export const removeQuestion = (id: string) =>
+  client.delete(`/api/admin/questions/${id}`);
+
 export const getPendingAnswers = (): Promise<{ data: DormAnswerDto[] }> =>
   client.get("/api/admin/answers/pending");
+
+export const getAllAnswers = (): Promise<{ data: DormAnswerDto[] }> =>
+  client.get("/api/admin/answers/all");
 
 export const approveAnswer = (id: string) =>
   client.post(`/api/admin/answers/${id}/approve`);
 
 export const rejectAnswer = (id: string) =>
   client.post(`/api/admin/answers/${id}/reject`);
+
+export const removeAnswer = (id: string) =>
+  client.delete(`/api/admin/answers/${id}`);

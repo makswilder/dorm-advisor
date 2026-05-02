@@ -11,7 +11,8 @@ public record DormQuestionDto(
     UUID dormId,
     String questionText,
     ContentStatus status,
-    LocalDateTime createdAt
+    LocalDateTime createdAt,
+    String authorEmail
 ) {
     public static DormQuestionDto fromEntity(DormQuestion q) {
         return new DormQuestionDto(
@@ -19,7 +20,8 @@ public record DormQuestionDto(
             q.getDorm().getId(),
             q.getQuestionText(),
             q.getStatus(),
-            q.getCreatedAt()
+            q.getCreatedAt(),
+            null
         );
     }
 }

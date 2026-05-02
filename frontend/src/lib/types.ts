@@ -92,6 +92,7 @@ export interface ReviewDto {
   createdAt: string;
   updatedAt: string;
   photos: PhotoDto[];
+  authorEmail: string | null;
 }
 
 export interface ReviewCreateDto {
@@ -142,6 +143,7 @@ export interface DormQuestionDto {
   questionText: string;
   status: ContentStatus;
   createdAt: string;
+  authorEmail: string | null;
 }
 
 export interface DormAnswerDto {
@@ -152,6 +154,7 @@ export interface DormAnswerDto {
   answerText: string;
   status: ContentStatus;
   createdAt: string;
+  authorEmail: string | null;
 }
 
 export interface ForumThreadDto {

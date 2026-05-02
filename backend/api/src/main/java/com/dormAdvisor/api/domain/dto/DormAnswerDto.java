@@ -14,9 +14,14 @@ public record DormAnswerDto(
     AuthorType authorType,
     String answerText,
     ContentStatus status,
-    LocalDateTime createdAt
+    LocalDateTime createdAt,
+    String authorEmail
 ) {
     public static DormAnswerDto fromEntity(DormAnswer a) {
+        return fromEntity(a, null);
+    }
+
+    public static DormAnswerDto fromEntity(DormAnswer a, String authorEmail) {
         return new DormAnswerDto(
             a.getId(),
             a.getQuestion().getId(),
@@ -24,7 +29,8 @@ public record DormAnswerDto(
             a.getAuthorType(),
             a.getAnswerText(),
             a.getStatus(),
-            a.getCreatedAt()
+            a.getCreatedAt(),
+            authorEmail
         );
     }
 }
