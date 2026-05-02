@@ -10,6 +10,7 @@ const DORM_PHOTOS: Record<string, string> = {
   "raday":            "/F%C3%B6ldes-Koll%C3%A9gium.jpg",
   "tarkareti":        "/Tarkar%C3%A9ti%20Koll%C3%A9gium.jpg",
   "simonyi-college":  "/Simonyi%20College.jpg",
+  "boszormenyi":      "/B%C3%B6sz%C3%B6rm%C3%A9nyi%20%C3%BAti%20Dormitory.png",
   "damjanich":        "/Damjanich%20Dormitory.jpg",
   "szanto":           "/Sz%C3%A1nt%C3%B3%20Dormitory.jpg",
 };

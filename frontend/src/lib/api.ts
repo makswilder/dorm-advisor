@@ -163,6 +163,9 @@ export const createForumThread = (
 ): Promise<{ data: ForumThreadDto }> =>
   client.post(`/api/schools/${schoolId}/forum/threads`, data);
 
+export const getForumThread = (threadId: string): Promise<{ data: ForumThreadDto }> =>
+  client.get(`/api/forum/threads/${threadId}`);
+
 export const getForumPosts = (threadId: string): Promise<{ data: ForumPostDto[] }> =>
   client.get(`/api/forum/threads/${threadId}/posts`);
 
